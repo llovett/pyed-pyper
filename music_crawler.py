@@ -23,6 +23,7 @@ def crawl_music(root):
 	for subdirname in dirnames:
 	    print os.path.join(os.path.abspath(dirname), subdirname)
 
+'''
 	# print path to all filenames.
 	for filename in filenames:
 	    print os.path.join(os.path.abspath(dirname), filename)
@@ -32,6 +33,7 @@ def crawl_music(root):
         if '.git' in dirnames:
         # don't go into any .git directories.
 	    dirnames.remove('.git')
+'''
 	
 	return music_file_to_path
 
