@@ -4,10 +4,10 @@
     <title>{% block title %}Pyed Pyper{% endblock %}</title>
     <!-- scripts -->
     <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
-    <script type="text/javascript" src="js/jplayer/jquery.jplayer.min.js"></script>
+    {% block scripts %}{% endblock %}
 
     <!-- stylesheets -->
-
+    {% block styles %}{% endblock %}
   </head>
   <body>
     {% block content %}{% endblock %}
