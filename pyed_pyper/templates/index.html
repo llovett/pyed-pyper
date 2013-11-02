@@ -2,6 +2,75 @@
 
 {% block scripts %}
 <script type="text/javascript" src="/static/js/jplayer/jquery.jplayer.min.js"></script>
+<script type="text/javascript" src="/static/js/jplayer/add-on/jplayer.playlist.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+    // initialize jplayer playlist
+    var playQueue = new jPlayerPlaylist({
+        jPlayer: "#jquery_jplayer_1",
+        cssSelectorAncestor: "#jp_container_1"
+    }, [ /* empty playlist initially */ ], {
+        playlistOptions: {
+            enableRemoveControls: true
+        },
+        swfPath: "/static/js/jplayer",
+        supplied: "m4a",
+        smoothPlayBar: true
+    });
+
+    // demo songs
+    var testSongs = [
+        {
+            title: "Strobe",
+            artist: "Deadmau5",
+            m4a: "/static/audio/Deadmau5/For Lack Of A Better Name/10 Strobe.m4a"
+        },
+        {
+            title: "The 16th Hour",
+            artist: "Deadmau5",
+            m4a: "/static/audio/Deadmau5/For Lack Of A Better Name/09 The 16th Hour.m4a"
+        },
+        {
+            title: "Lack Of A Better Name.m4a",
+            artist: "Deadmau5",
+            m4a: "/static/audio/Deadmau5/For Lack Of A Better Name/08 Lack Of A Better Name.m4a"
+        },
+        {
+            title: "Soma.m4a",
+            artist: "Deadmau5",
+            m4a: "/static/audio/Deadmau5/For Lack Of A Better Name/07 Soma.m4a"
+        },
+        {
+            title: "Word Problems.m4a",
+            artist: "Deadmau5",
+            m4a: "/static/audio/Deadmau5/For Lack Of A Better Name/06 Word Problems.m4a"
+        },
+        {
+            title: "05 Bot.m4a",
+            artist: "Deadmau5",
+            m4a: "/static/audio/Deadmau5/For Lack Of A Better Name/05 Bot.m4a"
+        },
+        {
+            title: "Moar Ghosts 'n' Stuff.m4a",
+            artist: "Deadmau5",
+            m4a: "/static/audio/Deadmau5/For Lack Of A Better Name/02 Moar Ghosts 'n' Stuff.m4a"
+        },
+        {
+            title: "FML.m4a",
+            artist: "Deadmau5",
+            m4a: "/static/audio/Deadmau5/For Lack Of A Better Name/01 FML.m4a"
+        }
+    ];
+
+    // Just add songs to the queue one-by-one for now
+    var songIndex = 0;
+    $("#add-button").click(function(event) {
+        event.preventDefault();
+        playQueue.add(testSongs[songIndex]);
+        songIndex = (songIndex+1)%testSongs.length;
+    });
+});
+</script>
 {% endblock %}
 
 {% block styles %}
@@ -15,10 +84,8 @@
 
   </div>
 
-  <!-- queue interface -->
-  <div id="play-queue">
-
-  </div>
+  <!-- for demo only -->
+  <input type="button" name="add-button" value="add Deadmau5 song" id="add-button" />
 
   <!-- jplayer -->
   <div id="jquery_jplayer_1" class="jp-player">
@@ -60,6 +127,13 @@
         <span>Update Required</span>
         To play the media you will need to either update your browser to a recent version or update your <a href="http://get.adobe.com/flashplayer/" target="_blank">Flash plugin</a>.
       </div>
+    </div>
+
+    <!-- jplayer playlist addon -->
+    <div class="jp-playlist">
+      <ul>
+        <li></li>
+      </ul>
     </div>
   </div>
 </div>
