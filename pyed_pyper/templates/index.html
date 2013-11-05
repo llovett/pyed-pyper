@@ -2,23 +2,84 @@
 
 {% block scripts %}
 <script type="text/javascript" src="/static/js/jplayer/jquery.jplayer.min.js"></script>
+<script type="text/javascript" src="/static/js/jplayer/add-on/jplayer.playlist.min.js"></script>
+<script type="text/javascript" src="/static/js/handlebars-v1.1.0.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+    // initialize jplayer playlist
+    var playQueue = new jPlayerPlaylist({
+        jPlayer: "#jquery_jplayer_1",
+        cssSelectorAncestor: "#jp_container_1"
+    }, [ /* empty playlist initially */ ], {
+        playlistOptions: {
+            enableRemoveControls: true
+        },
+        swfPath: "/static/js/jplayer",
+        supplied: "m4a",
+        smoothPlayBar: true
+    });
+
+    // library holding list of all songs
+    var library = {{ library|safe }};
+    
+    // build pyed player list
+    var songsTemplate = Handlebars.compile($("#pyed-row-template").html());
+    var songsListing = $("#pyed-player");
+    for (var index in library) {
+        var song = library[index];
+        var rowMarkup = $(songsTemplate({song:song, index:index}));
+        // click handler for a row (add to queue)
+        rowMarkup.click(function(event) {
+            event.preventDefault();
+            var songIndex = $(this).data("index");
+            playQueue.add(library[songIndex]);
+        });
+        songsListing.append(rowMarkup);
+    }
+
+    // header for the player
+    // title, artist, album, track # then year
+    var headingTemplate = Handlebars.compile($("#pyed-heading-template").html());
+    var headings = ["title", "artist", "album", "track #", "year"];
+    var headingsRow = $("#pyed-player-heading").append(headingTemplate({headings:headings}));
+});
+</script>
+<script id="pyed-heading-template" type="text/x-handlebars-template">
+  {% raw %}
+    {{#each headings}}
+      <div class="pyed-heading">
+        <a href="#">{{ this }}</a>
+      </div>
+    {{/each}}
+  {% endraw %}
+</script>
+<script id="pyed-row-template" type="text/x-handlebars-template">
+  {% raw %}
+    <div class="pyed-row" data-index="{{ index }}">
+      <div class="song-title pyed-col">{{ song.title }}</div>
+      <div class="song-artist pyed-col">{{ song.artist }}</div>
+      <div class="song-album pyed-col">{{ song.album }}</div>
+      <div class="song-track-number pyed-col">{{ song.number }}</div>
+      <div class="song-year pyed-col">{{ song.year }}</div>
+    </div>
+  {% endraw %}
+</script>
 {% endblock %}
 
 {% block styles %}
+<link rel="stylesheet" href="/static/css/pyed_player.css" type="text/css" media="screen" />
 <link rel="stylesheet" href="/static/css/jplayer/jplayer.blue.monday.css" type="text/css" media="screen" />
 {% endblock %}
 
 {% block content %}
 <div id="content">
   <!-- selection interface -->
-  <div id="selection">
-
+  <div id="pyed-player-container">
+    <div id="pyed-player-heading"></div>
+    <div id="pyed-player"></div>
   </div>
-
-  <!-- queue interface -->
-  <div id="play-queue">
-
-  </div>
+  <!-- for demo only -->
+  <input type="button" name="add-button" value="add Deadmau5 song" id="add-button" />
 
   <!-- jplayer -->
   <div id="jquery_jplayer_1" class="jp-player">
@@ -60,6 +121,13 @@
         <span>Update Required</span>
         To play the media you will need to either update your browser to a recent version or update your <a href="http://get.adobe.com/flashplayer/" target="_blank">Flash plugin</a>.
       </div>
+    </div>
+
+    <!-- jplayer playlist addon -->
+    <div class="jp-playlist">
+      <ul>
+        <li></li>
+      </ul>
     </div>
   </div>
 </div>

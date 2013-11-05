@@ -1,0 +1,15 @@
+#pyed-player-container {
+    min-width:800px;
+    width:80%;
+}
+
+div.pyed-heading, div.pyed-col {
+    display:inline-block;
+    /* there are five headings, so < 20% */
+    width:19%;
+}
+
+div.pyed-heading {
+    font-weight:bold;
+    text-transform:capitalize;
+}
