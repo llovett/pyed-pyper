@@ -3,6 +3,7 @@
 {% block scripts %}
 <script type="text/javascript" src="/static/js/jplayer/jquery.jplayer.min.js"></script>
 <script type="text/javascript" src="/static/js/jplayer/add-on/jplayer.playlist.min.js"></script>
+<script type="text/javascript" src="/static/js/handlebars-v1.1.0.js"></script>
 <script type="text/javascript">
 $(document).ready(function(){
     // initialize jplayer playlist
@@ -18,72 +19,65 @@ $(document).ready(function(){
         smoothPlayBar: true
     });
 
-    // demo songs
-    var testSongs = [
-        {
-            title: "Strobe",
-            artist: "Deadmau5",
-            m4a: "/static/audio/Deadmau5/For Lack Of A Better Name/10 Strobe.m4a"
-        },
-        {
-            title: "The 16th Hour",
-            artist: "Deadmau5",
-            m4a: "/static/audio/Deadmau5/For Lack Of A Better Name/09 The 16th Hour.m4a"
-        },
-        {
-            title: "Lack Of A Better Name.m4a",
-            artist: "Deadmau5",
-            m4a: "/static/audio/Deadmau5/For Lack Of A Better Name/08 Lack Of A Better Name.m4a"
-        },
-        {
-            title: "Soma.m4a",
-            artist: "Deadmau5",
-            m4a: "/static/audio/Deadmau5/For Lack Of A Better Name/07 Soma.m4a"
-        },
-        {
-            title: "Word Problems.m4a",
-            artist: "Deadmau5",
-            m4a: "/static/audio/Deadmau5/For Lack Of A Better Name/06 Word Problems.m4a"
-        },
-        {
-            title: "05 Bot.m4a",
-            artist: "Deadmau5",
-            m4a: "/static/audio/Deadmau5/For Lack Of A Better Name/05 Bot.m4a"
-        },
-        {
-            title: "Moar Ghosts 'n' Stuff.m4a",
-            artist: "Deadmau5",
-            m4a: "/static/audio/Deadmau5/For Lack Of A Better Name/02 Moar Ghosts 'n' Stuff.m4a"
-        },
-        {
-            title: "FML.m4a",
-            artist: "Deadmau5",
-            m4a: "/static/audio/Deadmau5/For Lack Of A Better Name/01 FML.m4a"
-        }
-    ];
+    // library holding list of all songs
+    var library = {{ library|safe }};
+    
+    // build pyed player list
+    var songsTemplate = Handlebars.compile($("#pyed-row-template").html());
+    var songsListing = $("#pyed-player");
+    for (var index in library) {
+        var song = library[index];
+        var rowMarkup = $(songsTemplate({song:song, index:index}));
+        // click handler for a row (add to queue)
+        rowMarkup.click(function(event) {
+            event.preventDefault();
+            var songIndex = $(this).data("index");
+            playQueue.add(library[songIndex]);
+        });
+        songsListing.append(rowMarkup);
+    }
 
-    // Just add songs to the queue one-by-one for now
-    var songIndex = 0;
-    $("#add-button").click(function(event) {
-        event.preventDefault();
-        playQueue.add(testSongs[songIndex]);
-        songIndex = (songIndex+1)%testSongs.length;
-    });
+    // header for the player
+    // title, artist, album, track # then year
+    var headingTemplate = Handlebars.compile($("#pyed-heading-template").html());
+    var headings = ["title", "artist", "album", "track #", "year"];
+    var headingsRow = $("#pyed-player-heading").append(headingTemplate({headings:headings}));
 });
+</script>
+<script id="pyed-heading-template" type="text/x-handlebars-template">
+  {% raw %}
+    {{#each headings}}
+      <div class="pyed-heading">
+        <a href="#">{{ this }}</a>
+      </div>
+    {{/each}}
+  {% endraw %}
+</script>
+<script id="pyed-row-template" type="text/x-handlebars-template">
+  {% raw %}
+    <div class="pyed-row" data-index="{{ index }}">
+      <div class="song-title pyed-col">{{ song.title }}</div>
+      <div class="song-artist pyed-col">{{ song.artist }}</div>
+      <div class="song-album pyed-col">{{ song.album }}</div>
+      <div class="song-track-number pyed-col">{{ song.number }}</div>
+      <div class="song-year pyed-col">{{ song.year }}</div>
+    </div>
+  {% endraw %}
 </script>
 {% endblock %}
 
 {% block styles %}
+<link rel="stylesheet" href="/static/css/pyed_player.css" type="text/css" media="screen" />
 <link rel="stylesheet" href="/static/css/jplayer/jplayer.blue.monday.css" type="text/css" media="screen" />
 {% endblock %}
 
 {% block content %}
 <div id="content">
   <!-- selection interface -->
-  <div id="selection">
-
+  <div id="pyed-player-container">
+    <div id="pyed-player-heading"></div>
+    <div id="pyed-player"></div>
   </div>
-
   <!-- for demo only -->
   <input type="button" name="add-button" value="add Deadmau5 song" id="add-button" />
 
