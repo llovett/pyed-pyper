@@ -21,10 +21,16 @@ $(document).ready(function(){
 
     // library holding list of all songs
     var library = {{ library|safe }};
-    
+
+    // header for the player
+    // title, artist, album, track # then year
+    var headingTemplate = Handlebars.compile($("#pyed-heading-template").html());
+    var headings = ["title", "artist", "album", "track #", "year"];
+    $("#pyed-pyper-container").append(headingTemplate({headings:headings}));
+
     // build pyed player list
     var songsTemplate = Handlebars.compile($("#pyed-row-template").html());
-    var songsListing = $("#pyed-player");
+    var songsListing = $("#pyed-pyper-container");
     for (var index in library) {
         var song = library[index];
         var rowMarkup = $(songsTemplate({song:song, index:index}));
@@ -37,31 +43,28 @@ $(document).ready(function(){
         songsListing.append(rowMarkup);
     }
 
-    // header for the player
-    // title, artist, album, track # then year
-    var headingTemplate = Handlebars.compile($("#pyed-heading-template").html());
-    var headings = ["title", "artist", "album", "track #", "year"];
-    var headingsRow = $("#pyed-player-heading").append(headingTemplate({headings:headings}));
 });
 </script>
 <script id="pyed-heading-template" type="text/x-handlebars-template">
   {% raw %}
-    {{#each headings}}
-      <div class="pyed-heading">
-        <a href="#">{{ this }}</a>
-      </div>
-    {{/each}}
+    <tr>
+      {{#each headings}}
+        <th>
+          <a href="#" class="pyed-heading">{{ this }}</a>
+        </th>
+      {{/each}}
+    </tr>
   {% endraw %}
 </script>
 <script id="pyed-row-template" type="text/x-handlebars-template">
   {% raw %}
-    <div class="pyed-row" data-index="{{ index }}">
-      <div class="song-title pyed-col">{{ song.title }}</div>
-      <div class="song-artist pyed-col">{{ song.artist }}</div>
-      <div class="song-album pyed-col">{{ song.album }}</div>
-      <div class="song-track-number pyed-col">{{ song.number }}</div>
-      <div class="song-year pyed-col">{{ song.year }}</div>
-    </div>
+    <tr data-index="{{ index }}">
+      <td class="song-title">{{ song.title }}</td>
+      <td class="song-artist">{{ song.artist }}</td>
+      <td class="song-album">{{ song.album }}</td>
+      <td class="song-track-number">{{ song.number }}</td>
+      <td class="song-year">{{ song.year }}</td>
+    </tr>
   {% endraw %}
 </script>
 {% endblock %}
@@ -72,61 +75,72 @@ $(document).ready(function(){
 {% endblock %}
 
 {% block content %}
-<div id="content">
-  <!-- selection interface -->
-  <div id="pyed-player-container">
-    <div id="pyed-player-heading"></div>
-    <div id="pyed-player"></div>
+<!-- header -->
+<div class="container" id="header">
+  <div class="row">
+    <div class="col-md-12">
+      <h1>Pyed Player</h1>    
+    </div>
   </div>
+</div>
 
-  <!-- jplayer -->
-  <div id="jquery_jplayer_1" class="jp-player">
+<div id="content" class="container">
+  <!-- selection interface -->
+  <div class="selection-container">
+    <table class="table table-striped table-hover" id="pyed-pyper-container">
+    </table>
   </div>
-  <div id="jp_container_1" class="jp-audio">
-    <div class="jp-type-single">
-      <div class="jp-gui jp-interface">
-        <ul class="jp-controls">
-          <li><a href="javascript:;" class="jp-play" tabindex="1">play</a></li>
-          <li><a href="javascript:;" class="jp-pause" tabindex="1">pause</a></li>
-          <li><a href="javascript:;" class="jp-stop" tabindex="1">stop</a></li>
-          <li><a href="javascript:;" class="jp-mute" tabindex="1" title="mute">mute</a></li>
-          <li><a href="javascript:;" class="jp-unmute" tabindex="1" title="unmute">unmute</a></li>
-          <li><a href="javascript:;" class="jp-volume-max" tabindex="1" title="max volume">max volume</a></li>
-        </ul>
-        <div class="jp-progress">
-          <div class="jp-seek-bar">
-            <div class="jp-play-bar"></div>
+  
+  <!-- jplayer -->
+  <div class="jplayer-container">
+    <div id="jquery_jplayer_1" class="jp-player">
+    </div>
+    <div id="jp_container_1" class="jp-audio">
+      <div class="jp-type-single">
+        <div class="jp-gui jp-interface">
+          <ul class="jp-controls">
+            <li><a href="javascript:;" class="jp-play" tabindex="1">play</a></li>
+            <li><a href="javascript:;" class="jp-pause" tabindex="1">pause</a></li>
+            <li><a href="javascript:;" class="jp-stop" tabindex="1">stop</a></li>
+            <li><a href="javascript:;" class="jp-mute" tabindex="1" title="mute">mute</a></li>
+            <li><a href="javascript:;" class="jp-unmute" tabindex="1" title="unmute">unmute</a></li>
+            <li><a href="javascript:;" class="jp-volume-max" tabindex="1" title="max volume">max volume</a></li>
+          </ul>
+          <div class="jp-progress">
+            <div class="jp-seek-bar">
+              <div class="jp-play-bar"></div>
+            </div>
+          </div>
+          <div class="jp-volume-bar">
+            <div class="jp-volume-bar-value"></div>
+          </div>
+          <div class="jp-time-holder">
+            <div class="jp-current-time"></div>
+            <div class="jp-duration"></div>
+            <ul class="jp-toggles">
+              <li><a href="javascript:;" class="jp-repeat" tabindex="1" title="repeat">repeat</a></li>
+              <li><a href="javascript:;" class="jp-repeat-off" tabindex="1" title="repeat off">repeat off</a></li>
+            </ul>
           </div>
         </div>
-        <div class="jp-volume-bar">
-          <div class="jp-volume-bar-value"></div>
-        </div>
-        <div class="jp-time-holder">
-          <div class="jp-current-time"></div>
-          <div class="jp-duration"></div>
-          <ul class="jp-toggles">
-            <li><a href="javascript:;" class="jp-repeat" tabindex="1" title="repeat">repeat</a></li>
-            <li><a href="javascript:;" class="jp-repeat-off" tabindex="1" title="repeat off">repeat off</a></li>
+        <div class="jp-title">
+          <ul>
+            <li>Bubble</li>
           </ul>
         </div>
+        <div class="jp-no-solution">
+          <span>Update Required</span>
+          To play the media you will need to either update your browser to a recent version or update your <a href="http://get.adobe.com/flashplayer/" target="_blank">Flash plugin</a>.
+        </div>
       </div>
-      <div class="jp-title">
+      
+      <!-- jplayer playlist addon -->
+      <div class="jp-playlist">
         <ul>
-          <li>Bubble</li>
+          <li></li>
         </ul>
       </div>
-      <div class="jp-no-solution">
-        <span>Update Required</span>
-        To play the media you will need to either update your browser to a recent version or update your <a href="http://get.adobe.com/flashplayer/" target="_blank">Flash plugin</a>.
-      </div>
-    </div>
-
-    <!-- jplayer playlist addon -->
-    <div class="jp-playlist">
-      <ul>
-        <li></li>
-      </ul>
-    </div>
+    </div>    
   </div>
 </div>
 {% endblock %}
