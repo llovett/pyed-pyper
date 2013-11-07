@@ -2,6 +2,9 @@ html, body {
     width:100%;
     height:100%;
     overflow:hidden;
+
+    background-color:rgb(120,0,140);
+    color:rgb(220,160,0);
 }
 
 #pyed-pyper-container {
@@ -14,6 +17,19 @@ html, body {
 
     overflow-x:hidden;
     overflow-y:scroll;
+
+    background-color:rgb(220,100,240);
+    color:rgb(30,20,0);
+}
+
+div.row-even {
+    background-color:rgb(240,110,255);
+}
+
+div.selection-row:hover {
+    background-color:rgb(170,80,200);
+    color:white;
+    font-weight:bold;
 }
 
 #header {
@@ -38,8 +54,20 @@ div.jplayer-container {
     height:100%;
 }
 
+div.selection-row {
+    height:2.2em;
+}
+
+div.headings-row {
+    height:2.4em;
+}
+
 a.pyed-heading {
     font-weight:bold;
     text-transform:capitalize;
     font-size:1.2em;
+}
+
+h1 {
+    font-weight:900;
 }
