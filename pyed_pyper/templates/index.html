@@ -25,7 +25,11 @@ $(document).ready(function(){
     // header for the player
     // title, artist, album, track # then year
     var headingTemplate = Handlebars.compile($("#pyed-heading-template").html());
-    var headings = ["title", "artist", "album", "track #", "year"];
+    var headings = [{title:"title", width:3},
+                    {title:"artist", width:3},
+                    {title:"album", width:3},
+                    {title:"track #", width:1},
+                    {title:"year", width:2}];
     $("#pyed-pyper-container").append(headingTemplate({headings:headings}));
 
     // build pyed player list
@@ -47,24 +51,24 @@ $(document).ready(function(){
 </script>
 <script id="pyed-heading-template" type="text/x-handlebars-template">
   {% raw %}
-    <tr>
+    <div class="row">
       {{#each headings}}
-        <th>
-          <a href="#" class="pyed-heading">{{ this }}</a>
-        </th>
+        <div class="col-sm-{{ this.width }}">
+          <a href="#" class="pyed-heading">{{ this.title }}</a>
+        </div>
       {{/each}}
-    </tr>
+    </div>
   {% endraw %}
 </script>
 <script id="pyed-row-template" type="text/x-handlebars-template">
   {% raw %}
-    <tr data-index="{{ index }}">
-      <td class="song-title">{{ song.title }}</td>
-      <td class="song-artist">{{ song.artist }}</td>
-      <td class="song-album">{{ song.album }}</td>
-      <td class="song-track-number">{{ song.number }}</td>
-      <td class="song-year">{{ song.year }}</td>
-    </tr>
+    <div class="row" data-index="{{ index }}">
+      <div class="col-sm-3 song-title">{{ song.title }}</div>
+      <div class="col-sm-3 song-artist">{{ song.artist }}</div>
+      <div class="col-sm-3 song-album">{{ song.album }}</div>
+      <div class="col-sm-1 song-track-number">{{ song.number }}</div>
+      <div class="col-sm-2 song-year">{{ song.year }}</div>
+    </div>
   {% endraw %}
 </script>
 {% endblock %}
@@ -75,22 +79,20 @@ $(document).ready(function(){
 {% endblock %}
 
 {% block content %}
-<!-- header -->
-<div class="container" id="header">
-  <div class="row">
-    <div class="col-md-12">
-      <h1>Pyed Player</h1>    
+<div id="content">
+  <!-- header -->
+  <div class="container" id="header">
+    <div class="row">
+      <div class="col-md-12">
+        <h1>Pyed Player</h1>    
+      </div>
     </div>
   </div>
-</div>
 
-<div id="content" class="container">
   <!-- selection interface -->
-  <div class="selection-container">
-    <table class="table table-striped table-hover" id="pyed-pyper-container">
-    </table>
+  <div id="pyed-pyper-container" class="container">
   </div>
-  
+
   <!-- jplayer -->
   <div class="jplayer-container">
     <div id="jquery_jplayer_1" class="jp-player">
