@@ -13,7 +13,7 @@ a {
 
 #pyed-pyper-container {
     position:absolute;
-    top:100px;
+    top:150px;
     left:0px;
     right:430px;
     bottom:0px;
@@ -39,13 +39,32 @@ div.selection-row:hover {
     font-weight:bold;
 }
 
-#header {
+#top-container {
     position:absolute;
     left:0px; right:0px; top:0px;
-    height:100px;
     width:100%;
 
     border-bottom:3px #aaa solid;
+}
+
+#header {
+    height:90px;
+}
+
+#toolbar {
+    background-image: -webkit-gradient(
+        linear,
+        left top,
+        left bottom,
+        color-stop(0, #696969),
+        color-stop(1, #292929)
+    );
+    background-image: -o-linear-gradient(bottom, #696969 0%, #292929 100%);
+    background-image: -moz-linear-gradient(bottom, #696969 0%, #292929 100%);
+    background-image: -webkit-linear-gradient(bottom, #696969 0%, #292929 100%);
+    background-image: -ms-linear-gradient(bottom, #696969 0%, #292929 100%);
+    background-image: linear-gradient(to bottom, #696969 0%, #292929 100%);
+    height:60px;
 }
 
 div.selection-container {
@@ -56,7 +75,7 @@ div.selection-container {
 div.jplayer-container {
     width:420px;
     position:absolute;
-    top:100px; right:0px;
+    top:150px; right:0px;
     border-left:3px #aaa solid;
     height:100%;
 }
