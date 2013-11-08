@@ -7,6 +7,10 @@ html, body {
     color:rgb(220,160,0);
 }
 
+a {
+    color:rgb(220,160,0);
+}
+
 #pyed-pyper-container {
     position:absolute;
     top:100px;
@@ -23,7 +27,10 @@ html, body {
 }
 
 div.row-even {
-    background-color:rgb(240,110,255);
+    background-color:rgb(255,180,255);
+}
+div.row-odd {
+    background-color:rgb(245,160,245);
 }
 
 div.selection-row:hover {
@@ -61,6 +68,16 @@ div.selection-row {
 div.headings-row {
     height:2.4em;
 }
+
+div.headings-row div {
+    border-right:2px groove #aaa;
+    height:100%;
+}
+
+div.headings-row a {
+    color:rgb(255,200,100);
+}
+
 
 a.pyed-heading {
     font-weight:bold;
