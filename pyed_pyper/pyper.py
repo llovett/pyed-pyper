@@ -63,7 +63,7 @@ def main_page():
             "artist": "Deadmau5"
         }
     ]
-    
+    library *= 10
     return render_template("index.html", library=library)
 
 if __name__ == '__main__':

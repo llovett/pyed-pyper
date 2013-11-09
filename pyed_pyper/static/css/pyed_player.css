@@ -1,15 +1,120 @@
-#pyed-player-container {
-    min-width:800px;
-    width:80%;
+html, body {
+    width:100%;
+    height:100%;
+    overflow:hidden;
+
+    background-color:rgb(120,0,140);
+    color:rgb(220,160,0);
 }
 
-div.pyed-heading, div.pyed-col {
-    display:inline-block;
-    /* there are five headings, so < 20% */
-    width:19%;
+a {
+    color:rgb(220,160,0);
 }
 
-div.pyed-heading {
+#pyed-pyper-container {
+    position:absolute;
+    top:150px;
+    left:0px;
+    right:430px;
+    bottom:0px;
+    width:auto;
+
+    overflow-x:hidden;
+    overflow-y:scroll;
+
+    background-color:rgb(220,100,240);
+    color:rgb(30,20,0);
+}
+
+div.row-even {
+    background-color:rgb(255,180,255);
+}
+div.row-odd {
+    background-color:rgb(245,160,245);
+}
+
+div.selection-row:hover {
+    background-color:rgb(170,80,200);
+    color:white;
+    font-weight:bold;
+}
+
+#top-container {
+    position:absolute;
+    left:0px; right:0px; top:0px;
+    width:100%;
+
+    border-bottom:3px #aaa solid;
+}
+
+#header {
+    height:90px;
+}
+
+#toolbar {
+    background-image: -webkit-gradient(
+        linear,
+        left top,
+        left bottom,
+        color-stop(0, #696969),
+        color-stop(1, #292929)
+    );
+    background-image: -o-linear-gradient(bottom, #696969 0%, #292929 100%);
+    background-image: -moz-linear-gradient(bottom, #696969 0%, #292929 100%);
+    background-image: -webkit-linear-gradient(bottom, #696969 0%, #292929 100%);
+    background-image: -ms-linear-gradient(bottom, #696969 0%, #292929 100%);
+    background-image: linear-gradient(to bottom, #696969 0%, #292929 100%);
+
+    height:60px;
+    padding:10px 10px;
+}
+
+div.selection-container {
+    margin-right:420px;
+    overflow:scroll;
+}
+
+div.jplayer-container {
+    position:absolute;
+    top:150px; right:0px;
+    border-left:3px #aaa solid;
+    height:100%;
+}
+
+div.jp-audio, div.jplayer-container {
+    /* overrides player width in jplayer.blue.monday.css */
+    width:430px !important;
+}
+
+div.selection-row {
+    height:2.2em;
+}
+
+div.headings-row {
+    height:2.4em;
+}
+
+div.headings-row div {
+    border-right:2px groove #aaa;
+    height:100%;
+}
+
+div.headings-row a {
+    color:rgb(255,200,100);
+}
+
+
+a.pyed-heading {
     font-weight:bold;
     text-transform:capitalize;
+    font-size:1.2em;
+}
+
+h1 {
+    font-weight:900;
+}
+
+input.search-input {
+    width:200px;
+    display:inline;
 }

@@ -21,46 +21,104 @@ $(document).ready(function(){
 
     // library holding list of all songs
     var library = {{ library|safe }};
-    
-    // build pyed player list
-    var songsTemplate = Handlebars.compile($("#pyed-row-template").html());
-    var songsListing = $("#pyed-player");
-    for (var index in library) {
-        var song = library[index];
-        var rowMarkup = $(songsTemplate({song:song, index:index}));
-        // click handler for a row (add to queue)
-        rowMarkup.click(function(event) {
-            event.preventDefault();
-            var songIndex = $(this).data("index");
-            playQueue.add(library[songIndex]);
-        });
-        songsListing.append(rowMarkup);
-    }
 
-    // header for the player
-    // title, artist, album, track # then year
-    var headingTemplate = Handlebars.compile($("#pyed-heading-template").html());
-    var headings = ["title", "artist", "album", "track #", "year"];
-    var headingsRow = $("#pyed-player-heading").append(headingTemplate({headings:headings}));
+    // --------------------------------------------------
+
+    // A mapping of key --> function(song) that returns true/false,
+    // false = filter for key filters this song
+    // true  = filter for key allows this song to be displayed
+    var SELECTION_FILTERS = {};
+
+    $("input.clear-playlist-button").click(function(e) {
+        e.preventDefault();
+        playQueue.setPlaylist([]);
+    });
+    $("input.clear-button").click(function(e) {
+        e.preventDefault();
+        $("input.search-input").val("");
+        delete SELECTION_FILTERS["search"];
+        clearSelectionList();
+        renderSelectionList();
+    });
+    $("input.search-button").click(function(e) {
+        e.preventDefault();
+        SELECTION_FILTERS["search"] = function(song) {
+            var cleanString = function(s) {
+                return s.toLowerCase().replace(/[^a-z]+/g,"");
+            };
+            var searchText = cleanString($("input.search-input").val());
+            // Fields of a song that can match the search text
+            var fieldsToSearch = ["title", "album", "artist"];
+            for (var i in fieldsToSearch) {
+                var field = fieldsToSearch[i];
+                var fieldValue = cleanString(song[field]);
+
+                // If one of the fields matches the search text, search results
+                // include this song
+                if( fieldValue.indexOf(searchText) >= 0 ){
+                    return true;
+                }
+            }
+            return false;
+        };
+        clearSelectionList();
+        renderSelectionList();
+    });
+
+    // --------------------------------------------------
+
+    var renderSelectionList = function() {
+        // predicate to determine if song should be part of the selection list,
+        // given the current filters
+        var shouldDisplay = function(song) {
+            for (var key in SELECTION_FILTERS) {
+                if (!SELECTION_FILTERS[key](song)) return false;
+            }
+            return true;
+        };
+
+        // How to render one row of the selection list
+        var songsTemplate = Handlebars.compile($("#pyed-row-template").html());
+        var songsListing = $("#pyed-pyper-container");
+        var renderSong = function(song, index) {
+            var rowMarkup = $(songsTemplate(
+                { song:song,
+                  index:index,
+                  parity:index%2 == 0 ? "row-even" : "row-odd" }
+            ));
+            // click handler for a row (add to queue)
+            rowMarkup.click(function(event) {
+                event.preventDefault();
+                var songIndex = $(this).data("index");
+                playQueue.add(library[songIndex]);
+            });
+            songsListing.append(rowMarkup);
+        };
+
+        // Render the listing
+        for (var songIndex in library) {
+            var song = library[songIndex];
+            if( shouldDisplay(song) ){
+                renderSong(song, songIndex);
+            }
+        }
+    };
+
+    var clearSelectionList = function() {
+        $("div.selection-row").remove();
+    };
+
+    renderSelectionList();
 });
-</script>
-<script id="pyed-heading-template" type="text/x-handlebars-template">
-  {% raw %}
-    {{#each headings}}
-      <div class="pyed-heading">
-        <a href="#">{{ this }}</a>
-      </div>
-    {{/each}}
-  {% endraw %}
 </script>
 <script id="pyed-row-template" type="text/x-handlebars-template">
   {% raw %}
-    <div class="pyed-row" data-index="{{ index }}">
-      <div class="song-title pyed-col">{{ song.title }}</div>
-      <div class="song-artist pyed-col">{{ song.artist }}</div>
-      <div class="song-album pyed-col">{{ song.album }}</div>
-      <div class="song-track-number pyed-col">{{ song.number }}</div>
-      <div class="song-year pyed-col">{{ song.year }}</div>
+    <div class="row selection-row {{ parity }}" data-index="{{ index }}">
+      <div class="col-sm-3 song-title">{{ song.title }}</div>
+      <div class="col-sm-3 song-artist">{{ song.artist }}</div>
+      <div class="col-sm-3 song-album">{{ song.album }}</div>
+      <div class="col-sm-1 song-track-number">{{ song.number }}</div>
+      <div class="col-sm-2 song-year">{{ song.year }}</div>
     </div>
   {% endraw %}
 </script>
@@ -73,61 +131,94 @@ $(document).ready(function(){
 
 {% block content %}
 <div id="content">
-  <!-- selection interface -->
-  <div id="pyed-player-container">
-    <div id="pyed-player-heading"></div>
-    <div id="pyed-player"></div>
-  </div>
-  <!-- for demo only -->
-  <input type="button" name="add-button" value="add Deadmau5 song" id="add-button" />
-
-  <!-- jplayer -->
-  <div id="jquery_jplayer_1" class="jp-player">
-  </div>
-  <div id="jp_container_1" class="jp-audio">
-    <div class="jp-type-single">
-      <div class="jp-gui jp-interface">
-        <ul class="jp-controls">
-          <li><a href="javascript:;" class="jp-play" tabindex="1">play</a></li>
-          <li><a href="javascript:;" class="jp-pause" tabindex="1">pause</a></li>
-          <li><a href="javascript:;" class="jp-stop" tabindex="1">stop</a></li>
-          <li><a href="javascript:;" class="jp-mute" tabindex="1" title="mute">mute</a></li>
-          <li><a href="javascript:;" class="jp-unmute" tabindex="1" title="unmute">unmute</a></li>
-          <li><a href="javascript:;" class="jp-volume-max" tabindex="1" title="max volume">max volume</a></li>
-        </ul>
-        <div class="jp-progress">
-          <div class="jp-seek-bar">
-            <div class="jp-play-bar"></div>
-          </div>
-        </div>
-        <div class="jp-volume-bar">
-          <div class="jp-volume-bar-value"></div>
-        </div>
-        <div class="jp-time-holder">
-          <div class="jp-current-time"></div>
-          <div class="jp-duration"></div>
-          <ul class="jp-toggles">
-            <li><a href="javascript:;" class="jp-repeat" tabindex="1" title="repeat">repeat</a></li>
-            <li><a href="javascript:;" class="jp-repeat-off" tabindex="1" title="repeat off">repeat off</a></li>
-          </ul>
-        </div>
-      </div>
-      <div class="jp-title">
-        <ul>
-          <li>Bubble</li>
-        </ul>
-      </div>
-      <div class="jp-no-solution">
-        <span>Update Required</span>
-        To play the media you will need to either update your browser to a recent version or update your <a href="http://get.adobe.com/flashplayer/" target="_blank">Flash plugin</a>.
+  <!-- header -->
+  <div class="container" id="top-container">
+    <div class="row" id="header">
+      <div class="col-md-12">
+        <h1>Pyed Player</h1>
       </div>
     </div>
+    <div class="row" id="toolbar">
+      <div class="col-md-12">
+        <input class="form-control search-input" type="text" name="song-search" value="" placeholder="Search" />
+        <input type="button" name="search-button" value="Search" class="search-button btn btn-primary" />
+        <input type="button" name="clear-button" value="Clear" class="clear-button btn btn-danger" />
 
-    <!-- jplayer playlist addon -->
-    <div class="jp-playlist">
-      <ul>
-        <li></li>
-      </ul>
+        <input type="button" name="clear-playlist-button" value="Clear Playlist" class="clear-playlist-button btn btn-warning pull-right" />
+      </div>
+    </div>
+  </div>
+
+  <!-- selection interface -->
+  <div id="pyed-pyper-container" class="container">
+    <div class="row headings-row">
+      <div class="col-sm-3">
+        <a href="#" class="pyed-heading">Title</a>
+      </div>
+      <div class="col-sm-3">
+        <a href="#" class="pyed-heading">Artist</a>
+      </div>
+      <div class="col-sm-3">
+        <a href="#" class="pyed-heading">Album</a>
+      </div>
+      <div class="col-sm-2">
+        <a href="#" class="pyed-heading">Track #</a>
+      </div>
+      <div class="col-sm-1">
+        <a href="#" class="pyed-heading">Year</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- jplayer -->
+  <div class="jplayer-container">
+    <div id="jquery_jplayer_1" class="jp-player">
+    </div>
+    <div id="jp_container_1" class="jp-audio">
+      <div class="jp-type-single">
+        <div class="jp-gui jp-interface">
+          <ul class="jp-controls">
+            <li><a href="javascript:;" class="jp-play" tabindex="1">play</a></li>
+            <li><a href="javascript:;" class="jp-pause" tabindex="1">pause</a></li>
+            <li><a href="javascript:;" class="jp-stop" tabindex="1">stop</a></li>
+            <li><a href="javascript:;" class="jp-mute" tabindex="1" title="mute">mute</a></li>
+            <li><a href="javascript:;" class="jp-unmute" tabindex="1" title="unmute">unmute</a></li>
+            <li><a href="javascript:;" class="jp-volume-max" tabindex="1" title="max volume">max volume</a></li>
+          </ul>
+          <div class="jp-progress">
+            <div class="jp-seek-bar">
+              <div class="jp-play-bar"></div>
+            </div>
+          </div>
+          <div class="jp-volume-bar">
+            <div class="jp-volume-bar-value"></div>
+          </div>
+          <div class="jp-time-holder">
+            <div class="jp-current-time"></div>
+            <div class="jp-duration"></div>
+            <ul class="jp-toggles">
+              <li><a href="javascript:;" class="jp-repeat" tabindex="1" title="repeat">repeat</a></li>
+              <li><a href="javascript:;" class="jp-repeat-off" tabindex="1" title="repeat off">repeat off</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="jp-title">
+          <ul>
+            <li>Bubble</li>
+          </ul>
+        </div>
+        <div class="jp-no-solution">
+          <span>Update Required</span>
+          To play the media you will need to either update your browser to a recent version or update your <a href="http://get.adobe.com/flashplayer/" target="_blank">Flash plugin</a>.
+        </div>
+      </div>
+
+      <!-- jplayer playlist addon -->
+      <div class="jp-playlist">
+        <ul>
+          <li></li>
+        </ul>
+      </div>
     </div>
   </div>
 </div>
