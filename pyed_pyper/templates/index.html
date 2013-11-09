@@ -44,7 +44,7 @@ $(document).ready(function(){
         e.preventDefault();
         SELECTION_FILTERS["search"] = function(song) {
             var cleanString = function(s) {
-                return s.toLowerCase().replace(/[^a-z]+/g,"");
+                return s.toLowerCase().replace(/[^a-z0-9]+/g,"");
             };
             var searchText = cleanString($("input.search-input").val());
             // Fields of a song that can match the search text
