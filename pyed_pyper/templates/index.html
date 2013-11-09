@@ -65,6 +65,28 @@ $(document).ready(function(){
         renderSelectionList();
     });
 
+    // Sorting with the headings
+    var invert = (function() {
+        var i = 1;
+        return function() {
+            i *= -1;
+            return i;
+        };
+    })();
+    $("a.pyed-heading").click(function(e) {
+        e.preventDefault();
+        var field = $(this).data("field");
+        var inv = invert();
+        var sortFunc = function(s1, s2) {
+            var comp1 = inv > 0? s1 : s2;
+            var comp2 = inv > 0? s2 : s1;
+            return String(comp1[field]).localeCompare(String(comp2[field]));
+        };
+        library.sort(sortFunc);
+        clearSelectionList();
+        renderSelectionList();
+    });
+
     // --------------------------------------------------
 
     var renderSelectionList = function() {
@@ -154,19 +176,19 @@ $(document).ready(function(){
   <div id="pyed-pyper-headings" class="container">
     <div class="row headings-row">
       <div class="col-sm-3">
-        <a href="#" class="pyed-heading">Title</a>
+        <a href="#" data-field="title" class="pyed-heading">Title</a>
       </div>
       <div class="col-sm-3">
-        <a href="#" class="pyed-heading">Artist</a>
+        <a href="#" data-field="artist" class="pyed-heading">Artist</a>
       </div>
       <div class="col-sm-3">
-        <a href="#" class="pyed-heading">Album</a>
+        <a href="#" data-field="album" class="pyed-heading">Album</a>
       </div>
       <div class="col-sm-2">
-        <a href="#" class="pyed-heading">Track #</a>
+        <a href="#" data-field="number" class="pyed-heading">Track #</a>
       </div>
       <div class="col-sm-1">
-        <a href="#" class="pyed-heading">Year</a>
+        <a href="#" data-field="year" class="pyed-heading">Year</a>
       </div>
     </div>
   </div>
