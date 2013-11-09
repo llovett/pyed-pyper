@@ -90,6 +90,7 @@ $(document).ready(function(){
             rowMarkup.click(function(event) {
                 event.preventDefault();
                 var songIndex = $(this).data("index");
+                console.log( library[songIndex] );
                 playQueue.add(library[songIndex]);
             });
             songsListing.append(rowMarkup);
