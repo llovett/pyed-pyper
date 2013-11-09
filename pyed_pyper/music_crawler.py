@@ -47,7 +47,7 @@ def walk_dirs(dir):
 	# print path to all subdirectories
 	for subdirname in dirnames:
 	    songs.extend(walk_dirs(subdirname))
-	
+
 	options = {"verbosity":"normal"}
 	msg = audiotools.Messenger("music_crawler", options)
 	# print path to all filenames
@@ -81,7 +81,7 @@ def walk_dirs(dir):
 		    song["number"] = "Unknown track number"
 		    song["year"] = "Unknown year"
 		else:
-		    song["title"] = song_metadata.track_name if song_metadata.track_name else filename 
+		    song["title"] = song_metadata.track_name if song_metadata.track_name else filename
 		    song["artist"] = song_metadata.artist_name if song_metadata.artist_name else "Unknown artist"
 		    song["album"] = song_metadata.album_name if song_metadata.album_name else "Unknown album"
 		    song["number"] = song_metadata.track_number if song_metadata.track_number else "Unknown track number"
@@ -94,8 +94,6 @@ def walk_dirs(dir):
 def fail_and_exit(message):
     print message
     sys.exit(1)
-
-#test main method
 
 def main():
     scraped_songs = crawl_music([sys.argv[1]])
@@ -111,4 +109,5 @@ def main():
 	print "year is "+song["year"]
 	print "-----------------"
 
-main()
+if __name__ == '__main__':
+    main()
