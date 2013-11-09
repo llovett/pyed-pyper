@@ -5,4 +5,11 @@ A lightweight, web-based music player
 
 DEPENDENCIES
 ------------
--faac, faad2 libraries
+System libraries:
+
+faac
+faad2
+lame
+mpg123
+vorbis-tools
+

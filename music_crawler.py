@@ -2,6 +2,17 @@
 Music Crawler
 Crawls ROOT dir and compiles a mapping of song to file path
 '''
+
+'''
+TODO
+----
+-m4a support --DONE
+-mp3 support --DONE
+-wav support --done?
+-ogg support --Done
+-print out dependencies when failure to open file
+-support for song w/o metadata info
+'''
 import os
 import sys
 
@@ -21,14 +32,13 @@ params:
 '''
 def crawl_music(root_dirs):
     global songs
-
     for root in root_dirs:
 	if not os.path.isdir(root):
 	    fail_and_exit("Cannot scrape from "+root+": not a directory");
 
 	walk_dirs(root)
-
     return songs
+
 
 '''
 recursively walk through all directories given root directory dir
@@ -36,36 +46,49 @@ recursively walk through all directories given root directory dir
 def walk_dirs(dir):
     global songs
     num_song = 0
-    for dirname, dirnames, filenames in os.walk(dir):
+    for dirname, dirnames, filenames in os.walk(dir, followlinks=True):
 	# print path to all subdirectories
 	for subdirname in dirnames:
 	    walk_dirs(subdirname)
 	
+	options = {"verbosity":"normal"}
+	msg = audiotools.Messenger("music_crawler", options)
 	# print path to all filenames
 	for filename in filenames:
 	    file_extension = os.path.splitext(filename)[1]
 	    if file_extension in music_file_types:
 		song = {}
 		song["full_path"] = os.path.join(os.path.abspath(dirname), filename)
-		song[file_extension] = song["full_path"]
+		song[file_extension[1:]] = song["full_path"]
 		try:
-		    song_audio_file = audiotools.open(song["full_path"])
+		    #using open_files because it supports a messenger object
+		    song_audio_file = audiotools.open_files([song["full_path"]], messenger=msg)
+		    if len(song_audio_file) > 0:
+			song_audio_file = song_audio_file[0]
+		    else:
+			print "couldn't open dat file: "+filename
+			continue
 		except Exception as e:
 		    print "Could not open file: "+song["full_path"]+". Error: "+str(e)
 		    continue #skip song
 		try:
 		    song_metadata = song_audio_file.get_metadata()
-		    if song_metadata == None:
-			continue
 		except Exception as e:
 		    print "Could not open get file metadata: "+song["full_path"]+". Error: "+str(e)
 		    continue #skip song
-		
-		song["title"] = song_metadata.track_name
-		song["artist"] = song_metadata.artist_name
-		song["album"] = song_metadata.album_name
-		song["number"] = song_metadata.track_number
-		song["year"] = song_metadata.year
+
+		if song_metadata is None:
+		    song["title"] = os.path.splitext(filename)[0]
+		    song["artist"] = "Unknown artist"
+		    song["album"] = "Unknown album"
+		    song["number"] = "Unknown track number"
+		    song["year"] = "Unknown year"
+		else:
+		    song["title"] = song_metadata.track_name if song_metadata.track_name else filename 
+		    song["artist"] = song_metadata.artist_name if song_metadata.artist_name else "Unknown artist"
+		    song["album"] = song_metadata.album_name if song_metadata.album_name else "Unknown album"
+		    song["number"] = song_metadata.track_number if song_metadata.track_number else "Unknown track number"
+		    song["year"] = song_metadata.year if song_metadata.year else "Unknown year"
 
 		#if len(song.items()) > 2: #only store the song if there is information besides pathname and extension
 		songs.append(song)
@@ -74,14 +97,22 @@ def fail_and_exit(message):
     print message
     sys.exit(1)
 
+'''
+#test main method
+
 def main():
-    crawl_music([sys.argv[1]])
-    for song in songs:
+    scraped_songs = crawl_music([sys.argv[1]])
+    print "printing songs"
+    print scraped_songs
+
+
+    for song in scraped_songs:
 	print "song_title is "+song["title"]
 	print "artist_name is "+song["artist"]
 	print "album_name is "+song["album"]
 	print "track_name is "+str(song["number"])
 	print "year is "+song["year"]
+	print "-----------------"
 
 main()
-
+'''
