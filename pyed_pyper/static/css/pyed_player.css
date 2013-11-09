@@ -64,7 +64,9 @@ div.selection-row:hover {
     background-image: -webkit-linear-gradient(bottom, #696969 0%, #292929 100%);
     background-image: -ms-linear-gradient(bottom, #696969 0%, #292929 100%);
     background-image: linear-gradient(to bottom, #696969 0%, #292929 100%);
+
     height:60px;
+    padding:10px 10px;
 }
 
 div.selection-container {
@@ -106,4 +108,9 @@ a.pyed-heading {
 
 h1 {
     font-weight:900;
+}
+
+input.search-input {
+    width:200px;
+    display:inline;
 }

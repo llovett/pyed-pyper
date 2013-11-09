@@ -22,47 +22,91 @@ $(document).ready(function(){
     // library holding list of all songs
     var library = {{ library|safe }};
 
-    // header for the player
-    // title, artist, album, track # then year
-    var headingTemplate = Handlebars.compile($("#pyed-heading-template").html());
-    var headings = [{title:"title", width:3},
-                    {title:"artist", width:3},
-                    {title:"album", width:3},
-                    {title:"track #", width:1},
-                    {title:"year", width:2}];
-    $("#pyed-pyper-container").append(headingTemplate({headings:headings}));
+    // --------------------------------------------------
 
-    // build pyed player list
-    var songsTemplate = Handlebars.compile($("#pyed-row-template").html());
-    var songsListing = $("#pyed-pyper-container");
-    for (var index in library) {
-        var song = library[index];
-        var rowMarkup = $(songsTemplate(
-            { song:song,
-              index:index,
-              parity:index%2 == 0 ? "row-even" : "row-odd" }
-        ));
-        // click handler for a row (add to queue)
-        rowMarkup.click(function(event) {
-            event.preventDefault();
-            var songIndex = $(this).data("index");
-            playQueue.add(library[songIndex]);
-        });
-        songsListing.append(rowMarkup);
-    }
+    // A mapping of key --> function(song) that returns true/false,
+    // false = filter for key filters this song
+    // true  = filter for key allows this song to be displayed
+    var SELECTION_FILTERS = {};
 
+    $("input.clear-playlist-button").click(function(e) {
+        e.preventDefault();
+        playQueue.setPlaylist([]);
+    });
+    $("input.clear-button").click(function(e) {
+        e.preventDefault();
+        $("input.search-input").val("");
+        SELECTION_FILTERS["search"] = function() { return true; };
+        clearSelectionList();
+        renderSelectionList();
+    });
+    $("input.search-button").click(function(e) {
+        e.preventDefault();
+        SELECTION_FILTERS["search"] = function(song) {
+            var searchText = $("input.search-input").val();
+            // Fields of a song that can match the search text
+            var fieldsToSearch = ["title", "album", "artist"];
+            for (var i in fieldsToSearch) {
+                var field = fieldsToSearch[i];
+                var fieldValue = song[field].toLowerCase();
+
+                // If one of the fields matches the search text, search results
+                // include this song
+                if( fieldValue.indexOf(searchText.toLowerCase()) >= 0 ){
+                    return true;
+                }
+            }
+            return false;
+        };
+        clearSelectionList();
+        renderSelectionList();
+    });
+
+    // --------------------------------------------------
+
+    var renderSelectionList = function() {
+        // predicate to determine if song should be part of the selection list,
+        // given the current filters
+        var shouldDisplay = function(song) {
+            for (var key in SELECTION_FILTERS) {
+                if (!SELECTION_FILTERS[key](song)) return false;
+            }
+            return true;
+        };
+
+        // How to render one row of the selection list
+        var songsTemplate = Handlebars.compile($("#pyed-row-template").html());
+        var songsListing = $("#pyed-pyper-container");
+        var renderSong = function(song, index) {
+            var rowMarkup = $(songsTemplate(
+                { song:song,
+                  index:index,
+                  parity:index%2 == 0 ? "row-even" : "row-odd" }
+            ));
+            // click handler for a row (add to queue)
+            rowMarkup.click(function(event) {
+                event.preventDefault();
+                var songIndex = $(this).data("index");
+                playQueue.add(library[songIndex]);
+            });
+            songsListing.append(rowMarkup);
+        };
+
+        // Render the listing
+        for (var songIndex in library) {
+            var song = library[songIndex];
+            if( shouldDisplay(song) ){
+                renderSong(song, songIndex);
+            }
+        }
+    };
+
+    var clearSelectionList = function() {
+        $("div.selection-row").remove();
+    };
+
+    renderSelectionList();
 });
-</script>
-<script id="pyed-heading-template" type="text/x-handlebars-template">
-  {% raw %}
-    <div class="row headings-row">
-      {{#each headings}}
-        <div class="col-sm-{{ this.width }}">
-          <a href="#" class="pyed-heading">{{ this.title }}</a>
-        </div>
-      {{/each}}
-    </div>
-  {% endraw %}
 </script>
 <script id="pyed-row-template" type="text/x-handlebars-template">
   {% raw %}
@@ -88,18 +132,39 @@ $(document).ready(function(){
   <div class="container" id="top-container">
     <div class="row" id="header">
       <div class="col-md-12">
-        <h1>Pyed Player</h1>    
+        <h1>Pyed Player</h1>
       </div>
     </div>
     <div class="row" id="toolbar">
       <div class="col-md-12">
-        This will be the search/toolbar.
+        <input class="form-control search-input" type="text" name="song-search" value="" placeholder="Search" />
+        <input type="button" name="search-button" value="Search" class="search-button btn btn-primary" />
+        <input type="button" name="clear-button" value="Clear" class="clear-button btn btn-danger" />
+
+        <input type="button" name="clear-playlist-button" value="Clear Playlist" class="clear-playlist-button btn btn-warning pull-right" />
       </div>
     </div>
   </div>
 
   <!-- selection interface -->
   <div id="pyed-pyper-container" class="container">
+    <div class="row headings-row">
+      <div class="col-sm-3">
+        <a href="#" class="pyed-heading">Title</a>
+      </div>
+      <div class="col-sm-3">
+        <a href="#" class="pyed-heading">Artist</a>
+      </div>
+      <div class="col-sm-3">
+        <a href="#" class="pyed-heading">Album</a>
+      </div>
+      <div class="col-sm-2">
+        <a href="#" class="pyed-heading">Track #</a>
+      </div>
+      <div class="col-sm-1">
+        <a href="#" class="pyed-heading">Year</a>
+      </div>
+    </div>
   </div>
 
   <!-- jplayer -->
@@ -144,14 +209,14 @@ $(document).ready(function(){
           To play the media you will need to either update your browser to a recent version or update your <a href="http://get.adobe.com/flashplayer/" target="_blank">Flash plugin</a>.
         </div>
       </div>
-      
+
       <!-- jplayer playlist addon -->
       <div class="jp-playlist">
         <ul>
           <li></li>
         </ul>
       </div>
-    </div>    
+    </div>
   </div>
 </div>
 {% endblock %}
