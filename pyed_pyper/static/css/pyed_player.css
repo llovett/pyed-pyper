@@ -11,19 +11,35 @@ a {
     color:rgb(220,160,0);
 }
 
-#pyed-pyper-container {
+#pyed-pyper-headings {
     position:absolute;
     top:150px;
     left:0px;
     right:430px;
-    bottom:0px;
+}
+
+#pyed-pyper-container, #pyed-pyper-headings {
+    position:absolute;
+    top:150px;
+    left:0px;
+    right:430px;
     width:auto;
+    background-color:rgb(220,100,240);
+    color:rgb(30,20,0);
+}
+
+#pyed-pyper-headings {
+    height:30px;
+}
+
+#pyed-pyper-container {
+    /* this container should stretch all the way to the bottom */
+    bottom:0px;
 
     overflow-x:hidden;
     overflow-y:scroll;
-
-    background-color:rgb(220,100,240);
-    color:rgb(30,20,0);
+    /* should match pyed-pyper-headings.height */
+    margin-top:30px;
 }
 
 div.row-even {
