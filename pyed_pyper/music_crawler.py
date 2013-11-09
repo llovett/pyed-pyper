@@ -22,21 +22,18 @@ import audiotools
 #music_file_types = [".asf", ".flac", ".m4a", ".ape", ".mp3", ".mpc", ".ogg", ".opus", ".ogv", ".oga", ".ogx", ".spx", ".tta", ".wv", ".ofr"]
 music_file_types = [".m4a",".mp3", ".ogg", ".wav"]
 
-# global dictionary of song information
-songs = []
-
 '''
 crawl_music
 params:
     root -- root directory. All music will be crawled from root. Paths to music files will be prepended with root
 '''
 def crawl_music(root_dirs):
-    global songs
+    songs = []
     for root in root_dirs:
 	if not os.path.isdir(root):
 	    fail_and_exit("Cannot scrape from "+root+": not a directory");
 
-	walk_dirs(root)
+	songs.extend(walk_dirs(root))
     return songs
 
 
@@ -44,12 +41,12 @@ def crawl_music(root_dirs):
 recursively walk through all directories given root directory dir
 '''
 def walk_dirs(dir):
-    global songs
     num_song = 0
+    songs = []
     for dirname, dirnames, filenames in os.walk(dir, followlinks=True):
 	# print path to all subdirectories
 	for subdirname in dirnames:
-	    walk_dirs(subdirname)
+	    songs.extend(walk_dirs(subdirname))
 	
 	options = {"verbosity":"normal"}
 	msg = audiotools.Messenger("music_crawler", options)
@@ -92,12 +89,12 @@ def walk_dirs(dir):
 
 		#if len(song.items()) > 2: #only store the song if there is information besides pathname and extension
 		songs.append(song)
+    return songs
 
 def fail_and_exit(message):
     print message
     sys.exit(1)
 
-'''
 #test main method
 
 def main():
@@ -115,4 +112,3 @@ def main():
 	print "-----------------"
 
 main()
-'''
