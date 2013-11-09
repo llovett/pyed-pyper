@@ -75,11 +75,15 @@ div.selection-container {
 }
 
 div.jplayer-container {
-    width:420px;
     position:absolute;
     top:150px; right:0px;
     border-left:3px #aaa solid;
     height:100%;
+}
+
+div.jp-audio, div.jplayer-container {
+    /* overrides player width in jplayer.blue.monday.css */
+    width:430px !important;
 }
 
 div.selection-row {

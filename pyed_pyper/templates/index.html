@@ -36,23 +36,26 @@ $(document).ready(function(){
     $("input.clear-button").click(function(e) {
         e.preventDefault();
         $("input.search-input").val("");
-        SELECTION_FILTERS["search"] = function() { return true; };
+        delete SELECTION_FILTERS["search"];
         clearSelectionList();
         renderSelectionList();
     });
     $("input.search-button").click(function(e) {
         e.preventDefault();
         SELECTION_FILTERS["search"] = function(song) {
-            var searchText = $("input.search-input").val();
+            var cleanString = function(s) {
+                return s.toLowerCase().replace(/[^a-z]+/g,"");
+            };
+            var searchText = cleanString($("input.search-input").val());
             // Fields of a song that can match the search text
             var fieldsToSearch = ["title", "album", "artist"];
             for (var i in fieldsToSearch) {
                 var field = fieldsToSearch[i];
-                var fieldValue = song[field].toLowerCase();
+                var fieldValue = cleanString(song[field]);
 
                 // If one of the fields matches the search text, search results
                 // include this song
-                if( fieldValue.indexOf(searchText.toLowerCase()) >= 0 ){
+                if( fieldValue.indexOf(searchText) >= 0 ){
                     return true;
                 }
             }
