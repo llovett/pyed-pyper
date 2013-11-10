@@ -1,5 +1,5 @@
 from flask import Flask, render_template
-from music_crawler import crawl_music, music_file_types
+from music_crawler import MUSIC_FILE_TYPES, crawl_music
 import json
 import os
 
@@ -13,7 +13,7 @@ def main_page():
     cur_path = str(os.getcwd())
     for song in library:
         song["full_path"] = song["full_path"][len(cur_path):]
-        for ext in music_file_types:
+        for ext in MUSIC_FILE_TYPES:
             ext_key = ext[1:]
             if ext_key in song:
                 song[ext_key] = song[ext_key][len(cur_path):]

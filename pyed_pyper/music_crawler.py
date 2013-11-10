@@ -21,7 +21,7 @@ import audiotools
 
 #music_file_types = [".asf", ".flac", ".m4a", ".ape", ".mp3", ".mpc", ".ogg", ".opus", ".ogv", ".oga", ".ogx", ".spx", ".tta", ".wv", ".ofr"]
 MUSIC_FILE_TYPES = [".m4a",".mp3", ".ogg", ".wav"]
-PYED_PYPER_ROOT_DIR = "/home/liz/code/pyed-pyper"
+PYED_PYPER_ROOT_DIR = os.path.join(os.path.dirname(__file__), "..")
 GENERATED_DIR = PYED_PYPER_ROOT_DIR+"/generated"
 SONG_CACHE_FILE = GENERATED_DIR+"/cached_songs.pickle"
 TIMESTAMP_CACHE_FILE = GENERATED_DIR+"/cached_timestamps.pickle"
@@ -56,7 +56,7 @@ def dir_needs_scraping(dir):
 '''
 crawl_music
 checks to see if the given directories need to be crawled using a pickled dictionary with "filename" => timestamp
-returns pickled dictionary if 
+returns pickled dictionary if
 params:
     root -- root directory. All music will be crawled from root. Paths to music files will be prepended with root
 '''
@@ -69,11 +69,11 @@ def crawl_music(root_dirs):
 	scrape_dir = dir_needs_scraping(root)
 	if scrape_dir or not os.path.exists(SONG_CACHE_FILE):
 	    songs.extend(walk_dirs(root))
-	    song_cache_file = open(SONG_CACHE_FILE, 'w')
-	    pickle.dump(songs, song_cache_file)
+	    with open(SONG_CACHE_FILE, 'w') as song_cache_file:
+                pickle.dump(songs, song_cache_file)
 	else:
-	    songs.extend(walk_dirs(root))
-	    songs = pickle.load(song_cache_file)
+            with open(SONG_CACHE_FILE, 'r') as song_cache_file:
+                songs = pickle.load(song_cache_file)
 
     return songs
 
