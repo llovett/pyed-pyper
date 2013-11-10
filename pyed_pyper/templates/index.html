@@ -167,7 +167,8 @@ $(document).ready(function(){
     };
 
     // sort by artist, album, track # when the page loads
-    library.sort(compoundComparator(comparify(["artist album number"])));
+    library.sort(compoundComparator(comparify(["artist", "album", "number"])));
+    clearSelectionList();
     renderSelectionList();
 });
 </script>
