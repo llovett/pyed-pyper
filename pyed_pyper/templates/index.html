@@ -22,6 +22,13 @@ $(document).ready(function(){
     // library holding list of all songs
     var library = {{ library|safe }};
 
+    // event bindings for the playlist
+    // https://groups.google.com/forum/#!topic/jplayer/BmkFZqa3oFQ
+    $("#jquery_jplayer_1").bind($.jPlayer.event.play, function(event) {
+        $('#current-track').empty();
+        $('#current-track').append(playQueue.playlist[playQueue.current].title);
+    });
+
     // --------------------------------------------------
 
     // A mapping of key --> function(song) that returns true/false,
@@ -200,11 +207,15 @@ $(document).ready(function(){
       </div>
     </div>
     <div class="row" id="toolbar">
-      <div class="col-md-12">
+      <div class="col-md-4">
         <input class="form-control search-input" type="text" name="song-search" value="" placeholder="Search" />
         <input type="button" name="search-button" value="Search" class="search-button btn btn-primary" />
         <input type="button" name="clear-button" value="Clear" class="clear-button btn btn-danger" />
-
+      </div>
+      <div class="col-md-4">
+        <h2 id="current-track"></h2>
+      </div>
+      <div class="col-md-4">
         <input type="button" name="clear-playlist-button" value="Clear Playlist" class="clear-playlist-button btn btn-warning pull-right" />
       </div>
     </div>

@@ -134,3 +134,8 @@ input.search-input {
     width:200px;
     display:inline;
 }
+
+#current-track {
+    margin-top:0;
+    text-align:center;
+}
