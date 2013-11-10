@@ -65,26 +65,62 @@ $(document).ready(function(){
         renderSelectionList();
     });
 
-    // Sorting with the headings
-    var invert = (function() {
+    // --------------------------------------------------
+    // Sorting
+    // Creates a comparator that can sort by a one key, then another, then another...
+    var compoundComparator = function(comparatorList) {
+        var clc = comparatorList.slice();
+        var comparator = clc.shift();
+
+        return function(a, b) {
+            result = comparator(a,b);
+            if ( 0 === result && clc.length > 0 ){
+                var continuation = compoundComparator(clc);
+
+                return continuation(a, b);
+            }
+            return result;
+        };
+    };
+    // Switch ascending/descending in a comparator
+    var invertComparator = function(comparator) {
+        var sense = inverter();
+        return comps.map(function(e) { return function(a, b) { sense * e(a,b); }; });
+    }
+    // Create a comparator for a key in an object
+    var keyComparison = function(key) {
+        return function(obj1, obj2) {
+            var a = obj1[key], b = obj2[key];
+            if (typeof a === "number" && typeof b === "number") {
+                return a - b;
+            }
+            // Does this make me feel bad inside? No.
+            return String(a).toLowerCase().localeCompare(String(b).toLowerCase());
+        };
+    };
+    // Flips 1/-1 each time called
+    var inverter = (function() {
         var i = 1;
         return function() {
-            i *= -1;
-            return i;
+            return i *= -1;
         };
     })();
+    // Syntax sugar
+    var comparify = function(fields) { return fields.map(function(e) { return keyComparison(e); }); };
+    // Comparators to attach to headings
     $("a.pyed-heading").click(function(e) {
         e.preventDefault();
-        var field = $(this).data("field");
-        var inv = invert();
-        var sortFunc = function(s1, s2) {
-            var comp1 = inv > 0? s1 : s2;
-            var comp2 = inv > 0? s2 : s1;
-            return String(comp1[field]).localeCompare(String(comp2[field]));
-        };
-        library.sort(sortFunc);
-        clearSelectionList();
-        renderSelectionList();
+        var sortFields = $(this).data("sortfields").split(" ");
+        var comparators = comparify(sortFields);
+
+        if( sortFields.length > 0 ){
+            var comparator1 = comparators[0];
+            var sense = inverter();
+            comparators[0] = function(a, b) { return comparator1(a,b) * sense; };
+            library.sort( compoundComparator(comparators) );
+            clearSelectionList();
+            renderSelectionList();
+        }
     });
 
     // --------------------------------------------------
@@ -112,7 +148,6 @@ $(document).ready(function(){
             rowMarkup.click(function(event) {
                 event.preventDefault();
                 var songIndex = $(this).data("index");
-                console.log( library[songIndex] );
                 playQueue.add(library[songIndex]);
             });
             songsListing.append(rowMarkup);
@@ -131,6 +166,8 @@ $(document).ready(function(){
         $("div.selection-row").remove();
     };
 
+    // sort by artist, album, track # when the page loads
+    library.sort(compoundComparator(comparify(["artist album number"])));
     renderSelectionList();
 });
 </script>
@@ -176,19 +213,19 @@ $(document).ready(function(){
   <div id="pyed-pyper-headings" class="container">
     <div class="row headings-row">
       <div class="col-sm-3">
-        <a href="#" data-field="title" class="pyed-heading">Title</a>
+        <a href="#" data-sortfields="title artist album number" class="pyed-heading">Title</a>
       </div>
       <div class="col-sm-3">
-        <a href="#" data-field="artist" class="pyed-heading">Artist</a>
+        <a href="#" data-sortfields="artist album number" class="pyed-heading">Artist</a>
       </div>
       <div class="col-sm-3">
-        <a href="#" data-field="album" class="pyed-heading">Album</a>
+        <a href="#" data-sortfields="album artist number" class="pyed-heading">Album</a>
       </div>
       <div class="col-sm-2">
-        <a href="#" data-field="number" class="pyed-heading">Track #</a>
+        <a href="#" data-sortfields="number artist album" class="pyed-heading">Track #</a>
       </div>
       <div class="col-sm-1">
-        <a href="#" data-field="year" class="pyed-heading">Year</a>
+        <a href="#" data-sortfields="year artist album number" class="pyed-heading">Year</a>
       </div>
     </div>
   </div>
