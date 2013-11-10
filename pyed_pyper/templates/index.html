@@ -47,8 +47,7 @@ $(document).ready(function(){
         clearSelectionList();
         renderSelectionList();
     });
-    $("input.search-button").click(function(e) {
-        e.preventDefault();
+    var searchHandler = function(e) {
         SELECTION_FILTERS["search"] = function(song) {
             var cleanString = function(s) {
                 return s.toLowerCase().replace(/[^a-z0-9]+/g,"");
@@ -70,7 +69,10 @@ $(document).ready(function(){
         };
         clearSelectionList();
         renderSelectionList();
-    });
+    };
+    $("input.search-button").click(function(e) { e.preventDefault(); searchHandler(e); });
+    $("#search-form").submit(function(e) { e.preventDefault(); searchHandler(e); });
+    $("input.search-input").keyup(searchHandler);
 
     // --------------------------------------------------
     // Sorting
@@ -208,9 +210,11 @@ $(document).ready(function(){
     </div>
     <div class="row" id="toolbar">
       <div class="col-md-4">
-        <input class="form-control search-input" type="text" name="song-search" value="" placeholder="Search" />
-        <input type="button" name="search-button" value="Search" class="search-button btn btn-primary" />
-        <input type="button" name="clear-button" value="Clear" class="clear-button btn btn-danger" />
+        <form id="search-form" method="post" action="">
+          <input class="form-control search-input" type="text" name="song-search" value="" placeholder="Search" />
+          <input type="button" name="search-button" value="Search" class="search-button btn btn-primary" />
+          <input type="button" name="clear-button" value="Clear" class="clear-button btn btn-danger" />
+        </form>
       </div>
       <div class="col-md-4">
         <h2 id="current-track"></h2>
