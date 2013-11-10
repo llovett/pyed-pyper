@@ -22,8 +22,9 @@ import audiotools
 #music_file_types = [".asf", ".flac", ".m4a", ".ape", ".mp3", ".mpc", ".ogg", ".opus", ".ogv", ".oga", ".ogx", ".spx", ".tta", ".wv", ".ofr"]
 MUSIC_FILE_TYPES = [".m4a",".mp3", ".ogg", ".wav"]
 PYED_PYPER_ROOT_DIR = "/home/liz/code/pyed-pyper"
-SONG_CACHE_FILE = PYED_PYPER_ROOT_DIR+"/generated/cached_songs.pickle"
-TIMESTAMP_CACHE_FILE = PYED_PYPER_ROOT_DIR+"/generated/cached_timestamps.pickle"
+GENERATED_DIR = PYED_PYPER_ROOT_DIR+"/generated"
+SONG_CACHE_FILE = GENERATED_DIR+"/cached_songs.pickle"
+TIMESTAMP_CACHE_FILE = GENERATED_DIR+"/cached_timestamps.pickle"
 
 '''
 dir_needs_scraping(dir)
@@ -33,6 +34,8 @@ dir_needs_scraping(dir)
 - updates contents of TIMESTAMP_CACHE_FILE if necessary
 '''
 def dir_needs_scraping(dir):
+    if not os.path.exists(GENERATED_DIR):
+	os.makedirs(GENERATED_DIR)
     try:
 	timestamp_cache_file = open(TIMESTAMP_CACHE_FILE, 'r')
 	cached_timestamps = pickle.load(timestamp_cache_file)
@@ -116,8 +119,8 @@ def walk_dirs(dir):
 		    song["title"] = os.path.splitext(filename)[0]
 		    song["artist"] = "Unknown artist"
 		    song["album"] = "Unknown album"
-		    song["number"] = "Unknown track number"
-		    song["year"] = "Unknown year"
+		    song["number"] = "Unknown track #"
+		    song["year"] = "1337"
 		else:
 		    song["title"] = song_metadata.track_name if song_metadata.track_name else filename
 		    song["artist"] = song_metadata.artist_name if song_metadata.artist_name else "Unknown artist"
