@@ -74,6 +74,18 @@ $(document).ready(function(){
     $("#search-form").submit(function(e) { e.preventDefault(); searchHandler(e); });
     $("input.search-input").keyup(searchHandler);
 
+    // Add All button
+    $("input.add-all-button").click(function(e) {
+        e.preventDefault();
+        // Take all visible library entries and add them to the playlist
+        for( var songIndex in library ){
+            var song = library[songIndex];
+            if( shouldDisplay(song) ){
+                playQueue.add(song);
+            }
+        }
+    });
+
     // --------------------------------------------------
     // Sorting
     // Creates a comparator that can sort by a one key, then another, then another...
@@ -85,7 +97,6 @@ $(document).ready(function(){
             result = comparator(a,b);
             if ( 0 === result && clc.length > 0 ){
                 var continuation = compoundComparator(clc);
-
                 return continuation(a, b);
             }
             return result;
@@ -134,16 +145,15 @@ $(document).ready(function(){
 
     // --------------------------------------------------
 
+    // predicate to determine if song should be part of the selection list,
+    // given the current filters
+    var shouldDisplay = function(song) {
+        for (var key in SELECTION_FILTERS) {
+            if (!SELECTION_FILTERS[key](song)) return false;
+        }
+        return true;
+    };
     var renderSelectionList = function() {
-        // predicate to determine if song should be part of the selection list,
-        // given the current filters
-        var shouldDisplay = function(song) {
-            for (var key in SELECTION_FILTERS) {
-                if (!SELECTION_FILTERS[key](song)) return false;
-            }
-            return true;
-        };
-
         // How to render one row of the selection list
         var songsTemplate = Handlebars.compile($("#pyed-row-template").html());
         var songsListing = $("#pyed-pyper-container");
@@ -219,7 +229,10 @@ $(document).ready(function(){
       <div class="col-md-4">
         <h2 id="current-track"></h2>
       </div>
-      <div class="col-md-4">
+      <div class="col-md-2">
+        <input type="button" name="add-all-button" value="Add All" class="btn btn-success pull-right add-all-button" />
+      </div>
+      <div class="col-md-2">
         <input type="button" name="clear-playlist-button" value="Clear Playlist" class="clear-playlist-button btn btn-warning pull-right" />
       </div>
     </div>
