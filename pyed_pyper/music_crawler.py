@@ -15,15 +15,45 @@ TODO
 '''
 import os
 import sys
-
+import pickle
 import audiotools
 
 
 #music_file_types = [".asf", ".flac", ".m4a", ".ape", ".mp3", ".mpc", ".ogg", ".opus", ".ogv", ".oga", ".ogx", ".spx", ".tta", ".wv", ".ofr"]
-music_file_types = [".m4a",".mp3", ".ogg", ".wav"]
+MUSIC_FILE_TYPES = [".m4a",".mp3", ".ogg", ".wav"]
+PYED_PYPER_ROOT_DIR = "/home/liz/code/pyed-pyper"
+SONG_CACHE_FILE = PYED_PYPER_ROOT_DIR+"/generated/cached_songs.pickle"
+TIMESTAMP_CACHE_FILE = PYED_PYPER_ROOT_DIR+"/generated/cached_timestamps.pickle"
+
+'''
+dir_needs_scraping(dir)
+
+- determines whether the given directory needs to be scraped by comparing
+  its last modified time with the modified time in TIMESTAMP_CACHE_FILE
+- updates contents of TIMESTAMP_CACHE_FILE if necessary
+'''
+def dir_needs_scraping(dir):
+    try:
+	timestamp_cache_file = open(TIMESTAMP_CACHE_FILE, 'r')
+	cached_timestamps = pickle.load(timestamp_cache_file)
+	if os.path.getmtime(dir) > cached_timestamps[dir]:
+	    cached_timestamps[dir] = os.path.getmtime(dir)
+	    timestamp_cache_file = open(TIMESTAMP_CACHE_FILE, 'w')
+	    pickle.dump(cached_timestamps, timestamp_cache_file)
+	    return True
+	else:
+	    return False
+    except IOError:
+	#no song_cache_file
+	timestamp_cache_file = open(TIMESTAMP_CACHE_FILE, 'w')
+	cached_time_stamps = { dir : os.path.getmtime(dir) }
+	pickle.dump(cached_time_stamps, timestamp_cache_file)
+	return True
 
 '''
 crawl_music
+checks to see if the given directories need to be crawled using a pickled dictionary with "filename" => timestamp
+returns pickled dictionary if 
 params:
     root -- root directory. All music will be crawled from root. Paths to music files will be prepended with root
 '''
@@ -33,7 +63,15 @@ def crawl_music(root_dirs):
 	if not os.path.isdir(root):
 	    fail_and_exit("Cannot scrape from "+root+": not a directory");
 
-	songs.extend(walk_dirs(root))
+	scrape_dir = dir_needs_scraping(root)
+	if scrape_dir or not os.path.exists(SONG_CACHE_FILE):
+	    songs.extend(walk_dirs(root))
+	    song_cache_file = open(SONG_CACHE_FILE, 'w')
+	    pickle.dump(songs, song_cache_file)
+	else:
+	    songs.extend(walk_dirs(root))
+	    songs = pickle.load(song_cache_file)
+
     return songs
 
 
@@ -53,7 +91,7 @@ def walk_dirs(dir):
 	# print path to all filenames
 	for filename in filenames:
 	    file_extension = os.path.splitext(filename)[1]
-	    if file_extension in music_file_types:
+	    if file_extension in MUSIC_FILE_TYPES:
 		song = {}
 		song["full_path"] = os.path.join(os.path.abspath(dirname), filename)
 		song[file_extension[1:]] = song["full_path"]
