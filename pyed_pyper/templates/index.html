@@ -26,7 +26,10 @@ $(document).ready(function(){
     // https://groups.google.com/forum/#!topic/jplayer/BmkFZqa3oFQ
     $("#jquery_jplayer_1").bind($.jPlayer.event.play, function(event) {
         $('#current-track').empty();
-        $('#current-track').append(playQueue.playlist[playQueue.current].title);
+        $('#current-track').text(playQueue.playlist[playQueue.current].title);
+        $('#current-artist').text(
+            "["+ playQueue.playlist[playQueue.current].artist+"]"
+        );
     });
 
     // --------------------------------------------------
@@ -213,11 +216,6 @@ $(document).ready(function(){
 <div id="content">
   <!-- header -->
   <div class="container" id="top-container">
-    <div class="row" id="header">
-      <div class="col-md-12">
-        <h1>Pyed Player</h1>
-      </div>
-    </div>
     <div class="row" id="toolbar">
       <div class="col-md-4">
         <form id="search-form" method="post" action="">
@@ -225,9 +223,13 @@ $(document).ready(function(){
           <input type="button" name="search-button" value="Search" class="search-button btn btn-primary" />
           <input type="button" name="clear-button" value="Clear" class="clear-button btn btn-danger" />
         </form>
+        <h4 id="header">Pyed Player</h4>
       </div>
-      <div class="col-md-4">
-        <h2 id="current-track"></h2>
+      <div class="col-md-4 current-track-container">
+        <marquee>
+          <h3 id="current-track">Untitled</h3>
+          <h3 id="current-artist">[Artist]</h3>
+        </marquee>
       </div>
       <div class="col-md-2">
         <input type="button" name="add-all-button" value="Add All" class="btn btn-success pull-right add-all-button" />

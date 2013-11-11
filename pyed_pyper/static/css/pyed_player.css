@@ -13,14 +13,14 @@ a {
 
 #pyed-pyper-headings {
     position:absolute;
-    top:150px;
+    top:60px;
     left:0px;
     right:430px;
 }
 
 #pyed-pyper-container, #pyed-pyper-headings {
     position:absolute;
-    top:150px;
+    top:60px;
     left:0px;
     right:430px;
     width:auto;
@@ -63,10 +63,6 @@ div.selection-row:hover {
     border-bottom:3px #aaa solid;
 }
 
-#header {
-    height:90px;
-}
-
 #toolbar {
     background-image: -webkit-gradient(
         linear,
@@ -92,7 +88,7 @@ div.selection-container {
 
 div.jplayer-container {
     position:absolute;
-    top:150px; right:0px;
+    top:60px; right:0px;
     border-left:3px #aaa solid;
     height:100%;
 }
@@ -135,7 +131,51 @@ input.search-input {
     display:inline;
 }
 
-#current-track {
+#current-track, #header {
     margin-top:0;
-    text-align:center;
 }
+
+#search-form, #header, #current-artist, #current-track {
+    display:inline;
+}
+
+#current-track, #current-artist {
+    font-family:"Courier", monospace;
+
+    text-shadow:
+    -2px -2px 0 #333,
+    2px -2px 0 #333,
+    -2px 2px 0 #333,
+    2px 2px 0 #333;
+
+    padding:0 10px;
+}
+
+div.current-track-container {
+    text-align:center;
+    background-color:black;
+    height:100%;
+
+    border-radius: 6px;
+    -moz-border-radius: 6px;
+    -webkit-border-radius: 6px;
+
+    background-image: -webkit-gradient(
+        linear,
+        left top,
+        left bottom,
+        color-stop(0, #383838),
+        color-stop(1, #3D3D3D)
+    );
+    background-image: -o-linear-gradient(bottom, #383838 0%, #3D3D3D 100%);
+    background-image: -moz-linear-gradient(bottom, #383838 0%, #3D3D3D 100%);
+    background-image: -webkit-linear-gradient(bottom, #383838 0%, #3D3D3D 100%);
+    background-image: -ms-linear-gradient(bottom, #383838 0%, #3D3D3D 100%);
+    background-image: linear-gradient(to bottom, #383838 0%, #3D3D3D 100%);
+
+    border:solid 1px #333;
+}
+
+/* div.current-track-container span { */
+/*     text-align:center; */
+/* } */
