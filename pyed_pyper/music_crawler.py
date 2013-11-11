@@ -19,25 +19,13 @@ import pickle
 import audiotools
 
 
-#Initialize path global vars
-try:
-    env = open("env.cfg").readline()
-except IOError:
-    fail_and_exit("Could not read env.cfg. Create env.cfg with either 'prod' or 'env' as first line")
-
-if env == "prod":
-    PYED_PYPER_ROOT_DIR = "/srv/pyed-pyper"
-else if env == "dev":
-    PYED_PYPER_ROOT_DIR = os.path.join(os.path.dirname(__file__), "..")
-else:
-    fail_and_exit("Could not read env.cfg. Create env.cfg with either 'prod' or 'env' as first line")
-
+#music_file_types = [".asf", ".flac", ".m4a", ".ape", ".mp3", ".mpc", ".ogg", ".opus", ".ogv", ".oga", ".ogx", ".spx", ".tta", ".wv", ".ofr"]
+MUSIC_FILE_TYPES = [".m4a",".mp3", ".ogg", ".wav"]
+PYED_PYPER_ROOT_DIR = os.path.join(os.path.dirname(__file__), "..")
 GENERATED_DIR = PYED_PYPER_ROOT_DIR+"/generated"
 SONG_CACHE_FILE = GENERATED_DIR+"/cached_songs.pickle"
 TIMESTAMP_CACHE_FILE = GENERATED_DIR+"/cached_timestamps.pickle"
 
-#music_file_types = [".asf", ".flac", ".m4a", ".ape", ".mp3", ".mpc", ".ogg", ".opus", ".ogv", ".oga", ".ogx", ".spx", ".tta", ".wv", ".ofr"]
-MUSIC_FILE_TYPES = [".m4a",".mp3", ".ogg", ".wav"]
 '''
 dir_needs_scraping(dir)
 
