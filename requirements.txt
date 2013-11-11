@@ -1,8 +1,9 @@
-mutagen==1.22
 Flask==0.10.1
 Jinja2==2.7.1
 MarkupSafe==0.18
+-e git+https://github.com/tuffy/python-audio-tools.git@7155618c3bc01b3b4551236a5855a61125fddd49#egg=Python_Audio_Tools-dev
 Werkzeug==0.9.4
+argparse==1.2.1
 itsdangerous==0.23
+mutagen==1.22
 wsgiref==0.1.2
-hsaudiotag=1.1.1
