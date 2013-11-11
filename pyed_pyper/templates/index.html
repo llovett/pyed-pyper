@@ -39,11 +39,11 @@ $(document).ready(function(){
     // true  = filter for key allows this song to be displayed
     var SELECTION_FILTERS = {};
 
-    $("input.clear-playlist-button").click(function(e) {
+    $("button.clear-playlist-button").click(function(e) {
         e.preventDefault();
         playQueue.setPlaylist([]);
     });
-    $("input.clear-button").click(function(e) {
+    $("button.clear-button").click(function(e) {
         e.preventDefault();
         $("input.search-input").val("");
         delete SELECTION_FILTERS["search"];
@@ -73,12 +73,12 @@ $(document).ready(function(){
         clearSelectionList();
         renderSelectionList();
     };
-    $("input.search-button").click(function(e) { e.preventDefault(); searchHandler(e); });
+    $("button.search-button").click(function(e) { e.preventDefault(); searchHandler(e); });
     $("#search-form").submit(function(e) { e.preventDefault(); searchHandler(e); });
     $("input.search-input").keyup(searchHandler);
 
     // Add All button
-    $("input.add-all-button").click(function(e) {
+    $("button.add-all-button").click(function(e) {
         e.preventDefault();
         // Take all visible library entries and add them to the playlist
         for( var songIndex in library ){
@@ -89,13 +89,21 @@ $(document).ready(function(){
         }
     });
     // Forward/next buttons for the playlist
-    $("input.next-track-button").click(function(e) {
+    $("button.next-track-button").click(function(e) {
         e.preventDefault();
         playQueue.next();
     });
-    $("input.prev-track-button").click(function(e) {
+    $("button.prev-track-button").click(function(e) {
         e.preventDefault();
         playQueue.previous();
+    });
+
+    // --------------------------------------------------
+    // Filagree
+    $("input.search-input").focus(function() {
+        $(this).animate({width:"300px"});
+    }).blur(function() {
+        $(this).animate({width:"200px"});
     });
 
     // --------------------------------------------------
