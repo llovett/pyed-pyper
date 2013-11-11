@@ -219,6 +219,7 @@ $(document).ready(function(){
 {% block styles %}
 <link rel="stylesheet" href="/static/css/pyed_player.css" type="text/css" media="screen" />
 <link rel="stylesheet" href="/static/css/jplayer/jplayer.blue.monday.css" type="text/css" media="screen" />
+<link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
 {% endblock %}
 
 {% block content %}
@@ -226,27 +227,45 @@ $(document).ready(function(){
   <!-- header -->
   <div class="container" id="top-container">
     <div class="row" id="toolbar">
+
       <div class="col-md-4">
         <form id="search-form" method="post" action="">
           <input class="form-control search-input" type="text" name="song-search" value="" placeholder="Search" />
-          <input type="button" name="search-button" value="Search" class="search-button btn btn-primary" />
-          <input type="button" name="clear-button" value="Clear" class="clear-button btn btn-danger" />
+          <button class="search-button btn btn-primary">
+            <i class="fa fa-search"></i> Search
+          </button>
+          <button class="clear-button btn btn-danger">
+            <i class="fa fa-times"></i> Clear
+          </button>
         </form>
-        <h4 id="header">Pyed Player</h4>
+        <h6 id="header">Pyed Player</h6>
       </div>
+
       <div class="col-md-4 current-track-container">
         <marquee>
           <h3 id="current-track">Untitled</h3>
           <h3 id="current-artist">[Artist]</h3>
         </marquee>
       </div>
-      <div class="col-md-2">
-        <input type="button" name="add-all-button" value="Add All" class="btn btn-success pull-right add-all-button" />
+
+      <div class="col-md-1">
+        <button class="btn btn-success add-all-button">
+          <i class="fa fa-plus"></i> Add All
+        </button>
       </div>
-      <div class="col-md-2">
-        <input type="button" name="prev-track-button" value="|<<" class="btn btn-primary prev-track-button" />
-        <input type="button" name="next-track-button" value=">>|" class="btn btn-primary next-track-button" />
-        <input type="button" name="clear-playlist-button" value="Clear Playlist" class="clear-playlist-button btn btn-warning pull-right" />
+
+      <div class="col-md-3">
+        <div class="pull-right">
+          <button class="btn btn-primary prev-track-button">
+            <i class="fa fa-step-backward"></i>
+          </button>
+          <button class="btn btn-primary next-track-button">
+            <i class="fa fa-step-forward"></i>
+          </button>
+          <button class="btn btn-warning clear-playlist-button">
+            <i class="fa fa-trash-o"></i> Clear
+          </button>
+        </div>
       </div>
     </div>
   </div>

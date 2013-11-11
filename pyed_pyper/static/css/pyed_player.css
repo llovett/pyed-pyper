@@ -139,6 +139,10 @@ input.search-input {
     display:inline;
 }
 
+#search-form {
+    vertical-align:top;
+}
+
 #current-track, #current-artist {
     font-family:"Courier", monospace;
 
@@ -179,3 +183,12 @@ div.current-track-container {
 /* div.current-track-container span { */
 /*     text-align:center; */
 /* } */
+
+li.jp-playlist-current {
+    background-color:#999;
+}
+
+a.jp-playlist-current {
+    color:rgb(255,140,0);
+    font-weight:bold;
+}
