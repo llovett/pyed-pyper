@@ -88,6 +88,15 @@ $(document).ready(function(){
             }
         }
     });
+    // Forward/next buttons for the playlist
+    $("input.next-track-button").click(function(e) {
+        e.preventDefault();
+        playQueue.next();
+    });
+    $("input.prev-track-button").click(function(e) {
+        e.preventDefault();
+        playQueue.previous();
+    });
 
     // --------------------------------------------------
     // Sorting
@@ -235,6 +244,8 @@ $(document).ready(function(){
         <input type="button" name="add-all-button" value="Add All" class="btn btn-success pull-right add-all-button" />
       </div>
       <div class="col-md-2">
+        <input type="button" name="prev-track-button" value="|<<" class="btn btn-primary prev-track-button" />
+        <input type="button" name="next-track-button" value=">>|" class="btn btn-primary next-track-button" />
         <input type="button" name="clear-playlist-button" value="Clear Playlist" class="clear-playlist-button btn btn-warning pull-right" />
       </div>
     </div>
