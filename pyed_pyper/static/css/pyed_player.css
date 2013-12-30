@@ -100,6 +100,12 @@ div.jp-audio, div.jplayer-container {
 
 div.selection-row {
     height:2.2em;
+    overflow:hidden;
+    white-space:nowrap;
+}
+
+div.selection-col {
+    overflow:hidden;
 }
 
 div.headings-row {

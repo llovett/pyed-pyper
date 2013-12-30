@@ -119,15 +119,17 @@ def walk_dirs(dir):
 		    song["title"] = os.path.splitext(filename)[0]
 		    song["artist"] = "Unknown artist"
 		    song["album"] = "Unknown album"
-		    song["number"] = "Unknown track #"
-		    song["year"] = "1337"
+		    song["number"] = ""
+		    song["year"] = ""
 		else:
 		    song["title"] = song_metadata.track_name if song_metadata.track_name else filename
 		    song["artist"] = song_metadata.artist_name if song_metadata.artist_name else "Unknown artist"
 		    song["album"] = song_metadata.album_name if song_metadata.album_name else "Unknown album"
-		    song["number"] = song_metadata.track_number if song_metadata.track_number else "Unknown track number"
-		    song["year"] = song_metadata.year if song_metadata.year else "Unknown year"
+		    song["number"] = song_metadata.track_number if song_metadata.track_number else ""
+		    song["year"] = song_metadata.year if song_metadata.year else ""
 
+		if len(song["year"]) > 4:
+		    song["year"] = song["year"][:4]
 		#if len(song.items()) > 2: #only store the song if there is information besides pathname and extension
 		songs.append(song)
     return songs
