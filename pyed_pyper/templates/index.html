@@ -108,13 +108,17 @@ $(document).ready(function(){
 
     // --------------------------------------------------
     // Sorting
-    // Creates a comparator that can sort by a one key, then another, then another...
+    // Creates a comparator that can sort by one key, then by another, then another...
     var compoundComparator = function(comparatorList) {
+        // copy of the comparator list; we will pop off the first one
         var clc = comparatorList.slice();
+        // first comparator in the list of comparators
         var comparator = clc.shift();
 
         return function(a, b) {
+            // compare by the first comparator
             result = comparator(a,b);
+            // need further comparing, so recurse
             if ( 0 === result && clc.length > 0 ){
                 var continuation = compoundComparator(clc);
                 return continuation(a, b);
@@ -122,6 +126,13 @@ $(document).ready(function(){
             return result;
         };
     };
+    // Flips 1/-1 each time called, used for toggling asc/desc sorting
+    var inverter = (function() {
+        var i = 1;
+        return function() {
+            return i *= -1;
+        };
+    })();
     // Switch ascending/descending in a comparator
     var invertComparator = function(comparator) {
         var sense = inverter();
@@ -138,13 +149,6 @@ $(document).ready(function(){
             return String(a).toLowerCase().localeCompare(String(b).toLowerCase());
         };
     };
-    // Flips 1/-1 each time called
-    var inverter = (function() {
-        var i = 1;
-        return function() {
-            return i *= -1;
-        };
-    })();
     // Syntax sugar
     var comparify = function(fields) { return fields.map(function(e) { return keyComparison(e); }); };
     // Comparators to attach to headings
@@ -174,10 +178,11 @@ $(document).ready(function(){
         return true;
     };
     var renderSelectionList = function() {
-        // How to render one row of the selection list
+        // Function to render one row of the selection list
         var songsTemplate = Handlebars.compile($("#pyed-row-template").html());
         var songsListing = $("#pyed-pyper-container");
         var renderSong = function(song, index) {
+            // Build markup for the row
             var rowMarkup = $(songsTemplate(
                 { song:song,
                   index:index,
