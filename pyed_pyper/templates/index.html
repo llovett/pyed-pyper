@@ -205,7 +205,9 @@ $(document).ready(function(){
 
         // click handler for artist text for one-click filtering
         var clickFilterHandler = function(e) {
-            e.preventDefault();
+            // Prevent click handler for row div
+            e.stopPropagation();
+
             var target = $(this).data("filtertarget");
             var value = $(this).text().toLowerCase();
 
