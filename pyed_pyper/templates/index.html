@@ -204,25 +204,27 @@ $(document).ready(function(){
         }
 
         // click handler for artist text for one-click filtering
-        $("div.song-artist").click(function(e) {
-            console.log( "click handler for filter called" );
+        var clickFilterHandler = function(e) {
+            e.preventDefault();
+            var target = $(this).data("filtertarget");
+            var value = $(this).text().toLowerCase();
 
-            var artist = $(this).text().toLowerCase();
-            SELECTION_FILTERS["artist"] = function(song) {
-                return song.artist.toLowerCase() === artist;
+            // Filtering function
+            SELECTION_FILTERS[target] = function(song) {
+                return String(song[target]).toLowerCase().localeCompare(value) === 0;
             };
 
-            // find the title of the field we're filtering on
+            // Add visible filter widget in heading
             var filterTemplate = Handlebars.compile($("#pyed-heading-filter-template").html());
             var allHeadings = $("a.pyed-heading");
             for( var i = 0; i < allHeadings.length; i++ ) {
                 var heading = $(allHeadings[i]);
-                if (heading.text().toLowerCase() === "artist") {
-                    console.log( "attaching heading filter" );
+                var headingRepr = heading.data("sortfields").split(" ")[0];
 
+                if (headingRepr === target) {
                     var filterItem = heading.next();
                     var filterContent = filterTemplate({ filter_text: $(this).text(),
-                                                         target: "artist" });
+                                                         target: target });
                     filterItem.empty();
                     filterItem.append( filterContent );
 
@@ -231,16 +233,14 @@ $(document).ready(function(){
             }
 
             refreshList();
-        });
+        };
+        $("a.filter-link").click(clickFilterHandler);
+
         // click handler for filter clear buttons
         $("span.filter-item").on("click", "a.remove-filter", function(e) {
             e.preventDefault();
             var filtered = $(this).data("filtertarget");
-            console.log( "target: "+filtered );
-
             delete SELECTION_FILTERS[filtered];
-            console.log( SELECTION_FILTERS );
-
             $(this).parent("span.filter-item").empty();
             refreshList();
         });
@@ -268,11 +268,22 @@ $(document).ready(function(){
 <script id="pyed-row-template" type="text/x-handlebars-template">
   {% raw %}
     <div class="row song-{{ index }} selection-row {{ parity }}" data-index="{{ index }}">
-      <div class="selection-col col-sm-3 song-title">{{ song.title }}</div>
-      <div class="selection-col col-sm-3 song-artist">{{ song.artist }}</div>
-      <div class="selection-col col-sm-3 song-album">{{ song.album }}</div>
-      <div class="selection-col col-sm-2 song-track-number">{{ song.number }}</div>
-      <div class="selection-col col-sm-1 song-year">{{ song.year }}</div>
+      <!-- TODO: turn these into links and save what they represent (eg "artist") somewhere -->
+      <div class="selection-col col-sm-3 song-title">
+        <a href="#" class="filter-link" data-filtertarget="title">{{ song.title }}</a>
+      </div>
+      <div class="selection-col col-sm-3 song-artist">
+        <a href="#" class="filter-link" data-filtertarget="artist">{{ song.artist }}</a>
+      </div>
+      <div class="selection-col col-sm-3 song-album">
+        <a href="#" class="filter-link" data-filtertarget="album">{{ song.album }}</a>
+      </div>
+      <div class="selection-col col-sm-2 song-track-number">
+        <a href="#" class="filter-link" data-filtertarget="number">{{ song.number }}</a>
+      </div>
+      <div class="selection-col col-sm-1 song-year">
+        <a href="#" class="filter-link" data-filtertarget="year">{{ song.year }}</a>
+      </div>
     </div>
   {% endraw %}
 </script>
