@@ -182,11 +182,8 @@ $(document).ready(function(){
         var songsListing = $("#pyed-pyper-container");
         var renderSong = function(song, index) {
             // Build markup for the row
-            var rowMarkup = $(songsTemplate(
-                { song:song,
-                  index:index,
-                  parity:index%2 == 0 ? "row-even" : "row-odd" }
-            ));
+            var rowMarkup = $(songsTemplate({ song:song,
+                                              index:index }));
             // click handler for a row (add to queue)
             rowMarkup.click(function(event) {
                 event.preventDefault();
@@ -251,10 +248,19 @@ $(document).ready(function(){
     };
 
     var refreshList = function() {
+        var visibleIndex = 0;
         for (var songIndex in library) {
             var row = $("div.song-"+songIndex);
             var song = library[songIndex];
             if ( shouldDisplay(song) ) {
+                if (visibleIndex % 2 === 0) {
+                    row.removeClass("row-odd");
+                    row.addClass("row-even");
+                } else {
+                    row.removeClass("row-even");
+                    row.addClass("row-odd");
+                }
+                visibleIndex++;
                 row.show();
             } else {
                 row.hide();
@@ -269,8 +275,7 @@ $(document).ready(function(){
 </script>
 <script id="pyed-row-template" type="text/x-handlebars-template">
   {% raw %}
-    <div class="row song-{{ index }} selection-row {{ parity }}" data-index="{{ index }}">
-      <!-- TODO: turn these into links and save what they represent (eg "artist") somewhere -->
+    <div class="row song-{{ index }} selection-row" data-index="{{ index }}">
       <div class="selection-col col-sm-3 song-title">
         <a href="#" class="filter-link" data-filtertarget="title">{{ song.title }}</a>
       </div>
