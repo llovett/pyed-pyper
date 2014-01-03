@@ -236,11 +236,11 @@ $(document).ready(function(){
         $("a.filter-link").click(clickFilterHandler);
 
         // click handler for filter clear buttons
-        $("span.filter-item").on("click", "a.remove-filter", function(e) {
+        $("div.filter-item").on("click", "a.remove-filter", function(e) {
             e.preventDefault();
             var filtered = $(this).data("filtertarget");
             delete SELECTION_FILTERS[filtered];
-            $(this).parent("span.filter-item").empty();
+            $(this).parent("div.filter-item").empty();
             refreshList();
         });
 
@@ -299,7 +299,7 @@ $(document).ready(function(){
     <a href="#" class="remove-filter" data-filtertarget="{{ target }}">
       <i class="fa fa-times"></i>
     </a>
-    ({{ filter_text }})
+    {{ filter_text }}
   {% endraw %}
 </script>
 {% endblock %}
@@ -363,23 +363,23 @@ $(document).ready(function(){
     <div class="row headings-row">
       <div class="col-sm-3 heading-div">
         <a href="#" data-sortfields="title artist album number" class="pyed-heading">Title</a>
-        <span class="filter-item"></span>
+        <div class="filter-item"></div>
       </div>
       <div class="col-sm-3 heading-div">
         <a href="#" data-sortfields="artist album number" class="pyed-heading">Artist</a>
-        <span class="filter-item"></span>
+        <div class="filter-item"></div>
       </div>
       <div class="col-sm-3 heading-div">
         <a href="#" data-sortfields="album artist number" class="pyed-heading">Album</a>
-        <span class="filter-item"></span>
+        <div class="filter-item"></div>
       </div>
       <div class="col-sm-2 heading-div">
         <a href="#" data-sortfields="number artist album" class="pyed-heading">Track #</a>
-        <span class="filter-item"></span>
+        <div class="filter-item"></div>
       </div>
       <div class="col-sm-1 heading-div">
         <a href="#" data-sortfields="year artist album number" class="pyed-heading">Year</a>
-        <span class="filter-item"></span>
+        <div class="filter-item"></div>
       </div>
     </div>
   </div>
